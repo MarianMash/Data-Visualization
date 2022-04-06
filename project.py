@@ -7,7 +7,6 @@ from dash import Dash, dcc, html, Input, Output
 app = Dash(__name__)
 # ---------------------------------------------------------------------------------
 # Data cleaning
-#file = pd.ExcelFile("/Users/masha/Desktop/NOVA/Data Visualization/Project/Dataset1.xlsx")
 file = pd.ExcelFile("Dataset1.xlsx")
 
 file_dict = {key:i for i, key in enumerate(file.sheet_names)}
