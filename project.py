@@ -1,18 +1,17 @@
 import pandas as pd
 import plotly.express as px  # (version 4.7.0 or higher)
-from utils import gen_sheet
+
 
 from dash import Dash, dcc, html, Input, Output 
 
 app = Dash(__name__)
 # ---------------------------------------------------------------------------------
 # Data cleaning
-file = pd.ExcelFile("/Users/masha/Desktop/NOVA/Data Visualization/Project/Enerdata_Energy_Statistical_Yearbook_2021.xlsx")
+file = pd.ExcelFile("/Users/masha/Desktop/NOVA/Data Visualization/Project/Dataset1.xlsx")
 #file = pd.ExcelFile("Enerdata_Energy_Statistical_Yearbook_2021.xlsx")
 
 file_dict = {key:i for i, key in enumerate(file.sheet_names)}
-
-sheet21 = gen_sheet(file, 'Share of renewables in electri')
+sheet21 = pd.read_excel(file,file_dict['Share of renewables in electri'])
 
 
 # ------------------------------------------------------------------------------
