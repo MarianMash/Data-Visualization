@@ -68,7 +68,7 @@ app.layout = html.Div([
     [Input('my_slider', 'value'), 
     Input(component_id='drop1', component_property='value')])
 def update_output(my_slider, drop1):
-    return 'You have selected {} and {}'.format(my_slider, drop1)
+    return 'You have selected {}'.format(my_slider, drop1)
 def Mapping():
     # Create figure
     fig = px.choropleth_mapbox(
