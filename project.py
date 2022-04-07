@@ -1,6 +1,8 @@
 import pandas as pd
 import plotly.express as px  # (version 4.7.0 or higher)
 import plotly.graph_objects as go
+import geojson
+
 
 
 from dash import Dash, dcc, html, Input, Output 
@@ -9,7 +11,10 @@ app = Dash(__name__)
 # ---------------------------------------------------------------------------------
 # Data cleaning
 
-df = pd.read_excel('Dataset_melted.xlsx')
+df = pd.read_csv('ActualDataset.csv')
+
+with open("geojson11.geojson") as f:
+    gj = geojson.load(f)
 
 #-------------------------------------------------------------------------------------
 # Building the graphs 
@@ -48,8 +53,10 @@ app.layout = html.Div([
     ),
 
     #html.Br(),
+    dcc.Graph(id="graph"),
 
     html.Div(id='output_container_slider_dropdown'),
+    
 
     ])
 
@@ -57,11 +64,40 @@ app.layout = html.Div([
 # Connect Dash-Components to Data
 @app.callback(
     Output('output_container_slider_dropdown', 'children'),
+    Output("graph", "figure"),
     [Input('my_slider', 'value'), 
     Input(component_id='drop1', component_property='value')])
 def update_output(my_slider, drop1):
     return 'You have selected {} and {}'.format(my_slider, drop1)
+def Mapping():
+    # Create figure
+    fig = px.choropleth_mapbox(
+        df,
+        geojson=gj,
+        featureidkey = "properties.iso_a3",
+        locations="iso_a3",
+        color=df['Total energy production (Mtoe)'],
+        color_continuous_scale='YlOrRd',
+        range_color=(0, df['Total energy production (Mtoe)'].max()),
+        hover_name='iso_a3', # here maybe Country
+        hover_data={'Country': True, 'Total energy production (Mtoe)': True,"iso_a3":False},
+        mapbox_style='dark',
+        zoom=0.7,
+        center={'lat': 19, 'lon': 11},
+        opacity=0.6
+    )
 
+    # Define layout specificities
+    fig.update_layout(
+       margin={'r':0,'t':0,'l':0,'b':0},
+        coloraxis_colorbar={
+            'title':'Total energy production (Mtoe)',
+            'tickvals':(0,df['Total energy production (Mtoe)'].max()),
+            #'ticktext':ticks        
+        })
+
+    # Display figure
+    return fig
 
 
 if __name__ == '__main__':
