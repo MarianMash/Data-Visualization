@@ -5,7 +5,7 @@ import tab_1, tab_2, tab_3, tab_4
 
 # ---------------------------------------------------------------------------------
 # Stile for the app 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = ['https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/sketchy/bootstrap.min.css']
 
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 
@@ -31,6 +31,10 @@ app.layout = html.Div([
     html.Div(id='tabs-content-example',
              children = tab1)
 ])
+
+# app.css.append_css({
+#     "external_url:https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/minty/bootstrap.min.css"
+# })
 
 # ------------------------------------------------------------------------------
 # Callback linking tabs layout to each tab
