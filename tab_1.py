@@ -60,6 +60,8 @@ def Mapping(selected_year):
         color=dff['Total energy production (Mtoe)'],
         color_continuous_scale='Darkmint',
         range_color=(0, dff['Total energy production (Mtoe)'].max()),
+        animation_frame = dff.Year,
+        animation_group = dff.iso_a3,
         hover_name='Country', # here maybe Country
         hover_data={'Country': True, 'Total energy production (Mtoe)': True,"iso_a3":False},
         mapbox_style='light',
