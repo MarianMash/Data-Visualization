@@ -48,7 +48,7 @@ layout = html.Div([
 
 def Mapping(selected_year):
     dff = df.copy()
-    dff = dff[dff["Year"]==selected_year]
+    # dff = dff[dff["Year"]==selected_year]
 
     container = 'You have selected {}'.format(selected_year)
     # Create figure
@@ -60,8 +60,10 @@ def Mapping(selected_year):
         color=dff['Total energy production (Mtoe)'],
         color_continuous_scale='Darkmint',
         range_color=(0, dff['Total energy production (Mtoe)'].max()),
+
         animation_frame = dff.Year,
         animation_group = dff.iso_a3,
+
         hover_name='Country', # here maybe Country
         hover_data={'Country': True, 'Total energy production (Mtoe)': True,"iso_a3":False},
         mapbox_style='light',
@@ -77,6 +79,13 @@ def Mapping(selected_year):
             'title':'Total energy production (Mtoe)',
             'tickvals':(0,dff['Total energy production (Mtoe)'].max()),
             #'ticktext':ticks        
-        })
+         }, #updatemenus = [dict(
+        #     type="animation_frame",
+        #     buttons=[dict(label="Play",
+        #                   method="animate",
+        #                   direction="up")])],
+        )
+    # fig.update_layout(updatemenus= [dict(type="buttons",button = )])
+
 
     return fig, container
