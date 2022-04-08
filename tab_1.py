@@ -23,7 +23,7 @@ plotly.express.set_mapbox_access_token("pk.eyJ1IjoibWFzaGF5ZWtoaTE4IiwiYSI6ImNsM
 # Layout of this tab
 
 layout = html.Div([
-    html.H3('Total energy production (Mtoe)'),
+    html.H3('Tab content 1'),
     dcc.Slider(id='my_slider',
                 min = 1990, 
                 max = 2020, 
