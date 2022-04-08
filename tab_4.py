@@ -81,6 +81,7 @@ def Mapping(selected_year):
 
     #horizontal barplot
     dff=dff[['Country','Electricity production (TWh)']].nlargest(12, ['Electricity production (TWh)'])
-    bar_hor = px.bar(dff, x="Electricity production (TWh)", y="Country", orientation='h')
+    bar_hor = px.bar(dff, x="Electricity production (TWh)", y="Country", orientation='h',color_discrete_sequence = "darfmint")
+   
     
     return fig, container, bar_hor
