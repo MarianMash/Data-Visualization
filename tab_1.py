@@ -23,7 +23,7 @@ plotly.express.set_mapbox_access_token("pk.eyJ1IjoibWFzaGF5ZWtoaTE4IiwiYSI6ImNsM
 # Layout of this tab
 
 layout = html.Div([
-    html.H3('Tab content 1'),
+    html.H3('Total energy production (Mtoe)'),
     dcc.Slider(id='my_slider',
                 min = 1990, 
                 max = 2020, 
@@ -31,10 +31,11 @@ layout = html.Div([
                 value=1990,  
                 marks = None,
                 tooltip={"placement": "bottom", "always_visible": True},
-                updatemode='drag'),
+                updatemode='drag',
+                ),
     html.Div(children=[
-                    dcc.Graph(id="world", style={'display': 'inline-block'}),
-                    dcc.Graph(id="bar_hor_1", style={'display': 'inline-block'})
+                    dcc.Graph(id="bar_hor_1", style={'display': 'inline-block','width': '34%'}),
+                    dcc.Graph(id="world", style={'display': 'inline-block','width': '64%'}),
                     ]),
     html.Div(id='output_container', children=[]),
     
@@ -63,15 +64,15 @@ def Mapping(selected_year):
         locations="iso_a3",
         color=dff['Total energy production (Mtoe)'],
         color_continuous_scale='Darkmint',
-        range_color=(0, round(dff['Total energy production (Mtoe)'].max())),
+        range_color=(0, dff['Total energy production (Mtoe)'].max()),
 
         animation_frame = dff.Year,
         animation_group = dff.iso_a3,
 
         hover_name='Country', # here maybe Country
         hover_data={'Country': True, 'Total energy production (Mtoe)': True,"iso_a3":False},
-        mapbox_style='light',
-        zoom=1,
+        mapbox_style='basic',
+        zoom=1.01,
         center={'lat': 19, 'lon': 11},
         opacity=0.6
     )
@@ -81,16 +82,19 @@ def Mapping(selected_year):
     margin={'r':0,'t':0,'l':0,'b':0},
         coloraxis_colorbar={
             'title':'Mtoe',
-            'tickvals':(0,dff['Total energy production (Mtoe)'].max()),
-            #'ticktext':ticks        
-         },legend=dict(
-        yanchor="bottom",
-        y=0.99,
-        xanchor="right",
-        x=0.01
-)
-        )
-    # fig.update_layout(updatemenus= [dict(type="buttons",button = )])
+            'tickvals':(0,round(dff['Total energy production (Mtoe)'].max())),
+         }
+         )
+    fig.update_coloraxes(colorbar_xanchor="left",   
+                            #colorbar_x= -0.01,
+                            colorbar_title_side = "right",
+                            colorbar_orientation = "v",
+                            colorbar_ticks = "inside")
+
+
+
+
+
         #horizontal barplot
     dfff=dff.nlargest(12, ['Total energy production (Mtoe)']).sort_values('Total energy production (Mtoe)', ascending=True)
     bar_hor = px.bar(dfff, 
@@ -108,6 +112,8 @@ def Mapping(selected_year):
          })
     bar_hor.update_traces(text=list(dfff.Country), textposition='inside',textfont_color='White')
     bar_hor.update_yaxes(visible=False, showticklabels=False)
+    bar_hor.update(layout_coloraxis_showscale=False)
+
 
 
     return fig, container, bar_hor
