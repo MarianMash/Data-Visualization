@@ -24,15 +24,16 @@ plotly.express.set_mapbox_access_token("pk.eyJ1IjoibWFzaGF5ZWtoaTE4IiwiYSI6ImNsM
 
 layout = html.Div([
     html.H3('Total energy production (Mtoe)'),
-    dcc.Slider(id='my_slider',
+    html.Div(children = [dcc.Slider(id='my_slider',
                 min = 1990, 
                 max = 2020, 
                 step = 1, 
                 value=1990,  
                 marks = None,
                 tooltip={"placement": "bottom", "always_visible": True},
-                updatemode='drag',
-                ),
+                updatemode='drag'),
+             html.Button('Largest', id='sort_button', n_clicks=0)]
+             ),
     html.Div(children=[
                     dcc.Graph(id="bar_hor_1", style={'display': 'inline-block','width': '34%'}),
                     dcc.Graph(id="world", style={'display': 'inline-block','width': '64%'}),
@@ -48,10 +49,13 @@ layout = html.Div([
 @callback(
     [Output(component_id='world',component_property = 'figure'),
     Output(component_id='output_container',component_property = 'children'),
-    Output(component_id='bar_hor_1',component_property = 'figure')],
-    [Input(component_id = 'my_slider', component_property = 'value')])
+    Output(component_id='bar_hor_1',component_property = 'figure'),
+    
+    Output(component_id = 'sort_button', component_property = 'children')],
+    [Input(component_id = 'my_slider', component_property = 'value'),
+    Input(component_id = 'sort_button', component_property = 'n_clicks')])
 
-def Mapping(selected_year):
+def Mapping(selected_year,sort_button_value):
     dff = df.copy()
     dff = dff[dff["Year"]==selected_year]
 
@@ -78,7 +82,7 @@ def Mapping(selected_year):
     )
 
     # Define layout specificities
-    fig.update_layout(
+    fig.update_layout(dragmode=False,
     margin={'r':0,'t':0,'l':0,'b':0},
         coloraxis_colorbar={
             'title':'Mtoe',
@@ -95,25 +99,32 @@ def Mapping(selected_year):
 
 
 
-        #horizontal barplot
-    dfff=dff.nlargest(12, ['Total energy production (Mtoe)']).sort_values('Total energy production (Mtoe)', ascending=True)
+    #horizontal barplot
+    if sort_button_value%2:
+        dfff=dff.nsmallest(10, ['Total energy production (Mtoe)']).sort_values('Total energy production (Mtoe)', ascending=False)
+        
+        button_text = "Smallest"
+    else: 
+        dfff=dff.nlargest(10, ['Total energy production (Mtoe)']).sort_values('Total energy production (Mtoe)', ascending=True)
+        button_text = "Largest"
+
     bar_hor = px.bar(dfff, 
                 x='Total energy production (Mtoe)', 
                 y="Country", orientation='h',
                 barmode = "group",
                 color=dfff['Total energy production (Mtoe)'],
                 color_continuous_scale='Darkmint',
-                range_color=(0, round(dff['Total energy production (Mtoe)'].max())),
+                range_color=(round(dfff.iloc[9]['Total energy production (Mtoe)']), round(dfff.iloc[0]['Total energy production (Mtoe)'])),
     )
-    bar_hor.update_layout(coloraxis_colorbar={
-            'title':'Mtoe',
-            'tickvals':(0,round(dff['Total energy production (Mtoe)'].max())),
-            #'ticktext':ticks        
-         })
+    # bar_hor.update_layout(coloraxis_colorbar={
+    #         'title':'Mtoe',
+    #         'tickvals':(0,round(dff.iloc[0]['Total energy production (Mtoe)'])),
+    #         #'ticktext':ticks        
+    #      })
     bar_hor.update_traces(text=list(dfff.Country), textposition='inside',textfont_color='White')
     bar_hor.update_yaxes(visible=False, showticklabels=False)
     bar_hor.update(layout_coloraxis_showscale=False)
 
 
 
-    return fig, container, bar_hor
+    return fig, container, bar_hor, button_text 
