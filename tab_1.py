@@ -133,7 +133,7 @@ def Mapping(selected_year,sort_button_value):
 
         hover_name='Country', # here maybe Country
         hover_data={'Country': True, 'Total energy production (Mtoe)': True,"iso_a3":False},
-        mapbox_style='basic',
+        mapbox_style='light',
         zoom=1.01,
         center={'lat': 19, 'lon': 11},
         opacity=0.6
@@ -179,8 +179,13 @@ def Mapping(selected_year,sort_button_value):
     #         'tickvals':(0,round(dff.iloc[0]['Total energy production (Mtoe)'])),
     #         #'ticktext':ticks        
     #      })
+    bar_hor.update_layout({
+            "plot_bgcolor": "rgba(0, 0, 0, 0)",
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            },margin={'r':0,'t':0,'l':15,'b':0})
     bar_hor.update_traces(text=list(dfff.Country), textposition='inside',textfont_color='White')
     bar_hor.update_yaxes(visible=False, showticklabels=False)
+    bar_hor.update_xaxes(visible=False, showticklabels=False)
     bar_hor.update(layout_coloraxis_showscale=False)
 
 
