@@ -295,9 +295,18 @@ def update_bar_graph(value):
                 )
             ]
     )
-    fig2.update_layout(
-        barmode="stack"
-    )
+    fig2.update_layout({
+            "plot_bgcolor": "rgba(0, 0, 0, 0)",
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            },margin={'r':0,'t':0,'l':10,'b':0},barmode="stack",
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-0.2,
+                xanchor="left",
+                x=0.3
+))
+    
     #return plots
     return fig2
 
@@ -325,6 +334,9 @@ def update_circle_graph(country_dropdown, value):
                 values = dff2.values.tolist()[0],
                 names= list(labels_dict.values()),
                 hole=.8)
+    piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            },margin={'r':0,'t':0,'l':15,'b':0})
 
     return piechart
 
