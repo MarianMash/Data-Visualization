@@ -2,6 +2,8 @@ from dash import dcc, html, Input, Output, callback
 import pandas as pd
 import plotly.express as px  # (version 4.7.0 or higher)
 import plotly
+import plotly.graph_objects as go
+
 
 #pip install geojson
 import geojson
@@ -17,6 +19,12 @@ with open("geojson11.geojson") as f:
 
 # Accesstoken for Mapbox-API
 plotly.express.set_mapbox_access_token("pk.eyJ1IjoibWFzaGF5ZWtoaTE4IiwiYSI6ImNsMXBkaXpveTE4eGIzY28yY2h2bDR0aWQifQ.4BeYsKCaxz8Mzg1A1C0LrA")
+
+
+# country list for dropdown 
+countries = []
+for country in df['Country'].unique():
+    countries.append({'label':str(country),'value':country})
 
 
 # ---------------------------------------------------------------------------------
@@ -45,6 +53,47 @@ layout = html.Div([
                     dcc.Graph(id="world", style={'display': 'inline-block','width': '64%'}),
                     ]),
     html.Div(id='output_container', children=[]),
+    html.Br(),
+    html.Br(),
+
+    ########################### CONSUMPTION ######################x
+    html.H3('Total energy consumption (Mtoe)'),
+    html.Br(),
+    dcc.RangeSlider(id="range_slider",
+                    min=1990,
+                    max=2020,
+                    value=[2005, 2006],
+                    step = 1,
+                    className="dcc_control",
+                    marks = None,
+                    tooltip={"placement": "bottom", "always_visible": True},
+                    updatemode='drag'),
+    
+    html.Br(),
+    dcc.Graph(id='bar_chart_2'),
+    html.Br(),
+    dcc.Slider(id='simple_slider',
+                min = 1990, 
+                max = 2020, 
+                step = 1, 
+                value=1990,  
+                marks = None,
+                tooltip={"placement": "bottom", "always_visible": True},
+                updatemode='drag',
+                ),
+    html.Br(),
+
+    dcc.Dropdown(
+        options= countries,
+        value='Portugal',
+        id='country_dropdown',
+        style={"width": "50%"}
+        ),
+
+    html.Br(),
+
+    dcc.Graph(id='circle_graph')
+
     
     
 ])
@@ -191,3 +240,96 @@ def Mapping(selected_year,sort_button_value):
 
 
     return fig, container, bar_hor, button_text 
+
+
+    ################# CONSUMPTION GRAPHS ######################
+
+@callback(
+        Output(component_id='bar_chart_2', component_property='figure'),
+        [Input(component_id='range_slider', component_property='value')])
+
+
+def update_bar_graph(value):
+    
+    #bar plot 2 with total consumption values per continent
+    dff1 = df.copy()
+    dff1 = dff1[(dff1['Year'] >= value[0]) & (dff1['Year'] <= value[1])]
+    dff1 = dff1[['Total energy consumption (Mtoe)', 'continent', 'Year']]
+
+    fig2 = go.Figure(
+            data=[
+                go.Bar(
+                    name="Europe",
+                    x= dff1.Year.unique(),
+                    y= dff1.loc[df['continent'] == 'Europe'].groupby('Year')['Total energy consumption (Mtoe)'].mean(),
+                    marker_color="#004687",
+                    opacity=0.8,
+                ),
+                go.Bar(
+                    name="Asia",
+                    x= dff1.Year.unique(),
+                    y=dff1.loc[df['continent'] == 'Asia'].groupby('Year')['Total energy consumption (Mtoe)'].mean(),
+                    marker_color="#AE8F6F",
+                    opacity=0.8,
+                ),
+                go.Bar(
+                    name="Oceania",
+                    x= dff1.Year.unique(),
+                    y= dff1.loc[df['continent'] == 'Oceania'].groupby('Year')['Total energy consumption (Mtoe)'].mean(),
+                    marker_color="#FF9912",
+                    opacity=0.8,
+                ),
+                go.Bar(
+                    name="Africa",
+                    x= dff1.Year.unique(),
+                    y= dff1.loc[df['continent'] == 'Africa'].groupby('Year')['Total energy consumption (Mtoe)'].mean(),
+                    marker_color="#4D4D4D",
+                    opacity=0.8,
+                ),
+                go.Bar(
+                    name="North America",
+                    x= dff1.Year.unique(),
+                    y= dff1.loc[df['continent'] == 'North America'].groupby('Year')['Total energy consumption (Mtoe)'].mean(),
+                    marker_color="#EE2C2C",
+                    opacity=0.8
+                )
+            ]
+    )
+    fig2.update_layout(
+        barmode="stack"
+    )
+    #return plots
+    return fig2
+
+#circle graph of total consumption of all features by country
+@callback(
+            Output(component_id='circle_graph', component_property='figure'),
+            [Input(component_id='country_dropdown', component_property='value'),
+            Input(component_id='simple_slider', component_property='value')])
+
+def update_circle_graph(country_dropdown, value):
+    labels_dict ={'Oil products domestic consumption (Mt)': 'Oil',
+           'Natural gas domestic consumption (bcm)': 'Gas',
+           'Coal and lignite domestic consumption (Mt)': 'Coal', 
+           'Electricity domestic consumption (TWh)': 'Electricity'}
+
+
+    dff2 = df.copy()
+    dff2 = dff2[dff2['Year'] == value]
+    dff2 = dff2[dff2['Country'] == country_dropdown]
+    dff2 = dff2[['Oil products domestic consumption (Mt)','Natural gas domestic consumption (bcm)',
+                'Coal and lignite domestic consumption (Mt)','Electricity domestic consumption (TWh)']]
+
+    piechart=px.pie(
+                data_frame=dff2,
+                values = dff2.values.tolist()[0],
+                names= list(labels_dict.values()),
+                hole=.8)
+
+    return piechart
+
+
+    ######################### COPMARISON GRAPHS #####################
+
+
+
