@@ -1,4 +1,4 @@
-from dash import dcc, html, Input, Output, callback
+from dash import dcc, html, Input, Output, callback, callback_context
 import pandas as pd
 import plotly.express as px  # (version 4.7.0 or higher)
 import plotly
@@ -13,12 +13,25 @@ import geojson
 # Data import and cleaning
 
 df = pd.read_csv('ActualDataset.csv')
-tab_string = 'Total energy production (Mtoe)'
 
+        ### Consumption ###
+tab_string = 'Total energy consumption (Mtoe)'
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
+
+        ### Production ###
+tab_string = 'Total energy production (Mtoe)'
+df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
+
 
 with open("geojson11.geojson") as f:
     gj = geojson.load(f)
+
+### Lists for lower Graphs
+consumption = ['Oil products domestic consumption (Mt)','Natural gas domestic consumption (bcm)',
+                'Coal and lignite domestic consumption (Mt)','Electricity domestic consumption (TWh)']
+
+production = ['Refined oil products production (Mt)','Natural gas production (bcm)',
+                'Coal and lignite production (Mt)','Electricity production (TWh)']
 
 # Accesstoken for Mapbox-API
 plotly.express.set_mapbox_access_token("pk.eyJ1IjoibWFzaGF5ZWtoaTE4IiwiYSI6ImNsMXBkaXpveTE4eGIzY28yY2h2bDR0aWQifQ.4BeYsKCaxz8Mzg1A1C0LrA")
@@ -34,7 +47,17 @@ for country in df['Country'].unique():
 # Layout of this tab
 
 layout = html.Div([
-    html.H3('Total energy production (Mtoe)'),
+
+    html.Div(children = [
+        html.Div([
+            html.Button("Production",id='Production'),
+            html.Button("Consumption",id='Consumption'),
+            ])
+            ]),
+    html.Div(html.H3(tab_string),
+        id='ticker_header'
+    )
+    ,
     html.Div(children = [
         html.Div([
             html.Button(id='buttonPlay', children='Play'),
@@ -60,7 +83,7 @@ layout = html.Div([
     html.Br(),
 
     ########################### CONSUMPTION ######################x
-    html.H3('Total energy consumption (Mtoe)'),
+   # html.H3('Total energy consumption (Mtoe)'),
     html.Br(),
     html.Div([dcc.Slider(id='simple_slider',
                 min = 1990, 
@@ -77,7 +100,7 @@ layout = html.Div([
         html.Div([dcc.RangeSlider(id="range_slider",
                     min=1990,
                     max=2020,
-                    value=[1995, 2015],
+                    value=[1995, 2015   ],
                     step = 1,
                     className="dcc_control",
                     marks = None,
@@ -128,7 +151,8 @@ layout = html.Div([
     Input(component_id='buttonPause', component_property='n_clicks'),
     Input(component_id='buttonReset', component_property='n_clicks'),
     Input('my_slider', 'value'),
-    Input('my_slider', 'drag_value')]
+    Input('my_slider', 'drag_value'),
+    ]
 )
 def enable_interval_update(buttonPlay, buttonPause, buttonReset, stepper, dragValue):
     #msg = 'play: {}, pause: {}, reset: {}, stepper: {}, drag: {}'.format(buttonPlay, buttonPause, buttonReset, stepper, dragValue)
@@ -169,30 +193,81 @@ def on_click(n_intervals, buttonReset, dragValue):
     return 1990 + (n_intervals)%30, 0, n_intervals
 
 
-
 @callback(
-    [Output(component_id='world',component_property = 'figure'),
-    Output(component_id='bar_hor_1',component_property = 'figure'),
+    [
+    Output(component_id ='world',component_property = 'figure'),
+    Output(component_id ='bar_hor_1',component_property = 'figure'),
     
     Output(component_id = 'sort_button', component_property = 'children'),
-    Output(component_id = 'Normalized', component_property = 'children')],
+    Output(component_id = 'Normalized', component_property = 'children'),
+
+    Output(component_id = 'circle_graph', component_property ='figure'),
+
+    Output(component_id ='bar_chart_2', component_property ='figure'),
+
+    Output(component_id = 'ticker_header', component_property = 'children')
+
+
+    ],
     [Input(component_id = 'my_slider', component_property = 'value'),
     Input(component_id = 'Normalized', component_property = 'n_clicks'),
-    Input(component_id = 'sort_button', component_property = 'n_clicks')])
+    Input(component_id = 'sort_button', component_property = 'n_clicks'),
+    Input(component_id = 'Production', component_property = 'n_clicks'),
+    Input(component_id = 'Consumption', component_property = 'n_clicks'),
+    Input(component_id ='country_dropdown', component_property = 'value'),
+    Input(component_id ='simple_slider', component_property = 'value'),
+    Input(component_id = 'range_slider', component_property = 'value')
+    ])
 
-def Mapping(selected_year,sort_button_value,sort_button2_value):
+def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Button, Con_Button,country_dropdown, value_pie, value_bar):
     dff = df.copy()
     dff = dff[dff["Year"]==selected_year]
+    
+########################################################################################################################################################
+    ############## 
 
-    # Create figure
+    # Normalize Button
+        # Production or Consumption
+    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+    list_1 = production
+    tab_string = 'Total energy production (Mtoe)'
+
+    header = [html.H3(tab_string)]
+    if 'Production' in changed_id:
+        list_1 = production 
+        tab_string = 'Total energy production (Mtoe)'
+    
+        header = [html.H3(tab_string)]
+        
+    elif 'Consumption' in changed_id:
+        list_1 = consumption
+        tab_string = 'Total energy consumption (Mtoe)'
+        header = [html.H3(tab_string)]
+    else: 
+        next
+
+
+### Absolute or relative
     if sort_button_value%2:
         the_column = f"{tab_string}_div_pop"
         button2_text = "Per 10000-Capita"
     else: 
         button2_text = "Absolute"
-        the_column = 'Total energy production (Mtoe)'
+        the_column = tab_string
+
+     # Largst / Smallest Button
+    if sort_button2_value%2:
+        dfff=dff.nsmallest(10, [the_column]).sort_values(the_column, ascending=False)
+        
+        button_text = "Smallest"
+    else: 
+        dfff=dff.nlargest(10, [the_column]).sort_values(the_column, ascending=True)
+        button_text = "Largest"
     
+
     
+########################################################################################################################################################    
+    # Create figure
     fig = px.choropleth_mapbox(
         dff,
         geojson=gj,
@@ -232,13 +307,7 @@ def Mapping(selected_year,sort_button_value,sort_button2_value):
 
 
     #horizontal barplot
-    if sort_button2_value%2:
-        dfff=dff.nsmallest(10, [the_column]).sort_values(the_column, ascending=False)
-        
-        button_text = "Smallest"
-    else: 
-        dfff=dff.nlargest(10, [the_column]).sort_values(the_column, ascending=True)
-        button_text = "Largest"
+ 
 
     bar_hor = px.bar(dfff, 
                 x=the_column, 
@@ -263,58 +332,73 @@ def Mapping(selected_year,sort_button_value,sort_button2_value):
     bar_hor.update(layout_coloraxis_showscale=False)
 
 
+     ########################################################################################################################################
+    #PieChart
+ 
+  
+    labels_dict ={list_1[0]: 'Oil',
+           list_1[1]: 'Gas',
+           list_1[2]: 'Coal', 
+           list_1[3]: 'Electricity'}
 
-    return fig, bar_hor, button_text , button2_text
+
+    dff2 = df.copy()
+    dff2 = dff2[dff2['Year'] == value_pie]
+    dff2 = dff2[dff2['Country'] == country_dropdown]
+    dff2 = dff2[list_1]
+
+    piechart=px.pie(
+                data_frame=dff2,
+                values = dff2.values.tolist()[0],
+                names= list(labels_dict.values()),
+                hole=.8,
+            color_discrete_sequence = px.colors.qualitative.Antique)
+    piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            },margin={'r':10,'t':0,'l':0,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.40))
 
 
-    ################# CONSUMPTION GRAPHS ######################
+    ########################################## Barchart ##############################################################################################
 
-@callback(
-        Output(component_id='bar_chart_2', component_property='figure'),
-        [Input(component_id='range_slider', component_property='value')])
-
-
-def update_bar_graph(value):
-    
-    #bar plot 2 with total consumption values per continent
+        #bar plot 2 with total consumption values per continent
     dff1 = df.copy()
-    dff1 = dff1[(dff1['Year'] >= value[0]) & (dff1['Year'] <= value[1])]
-    dff1 = dff1[['Total energy consumption (Mtoe)', 'continent', 'Year']]
+    dff1 = dff1[(dff1['Year'] >= value_bar[0]) & (dff1['Year'] <= value_bar[1])]
+    dff1 = dff1[[tab_string, 'continent', 'Year']]
 
     fig2 = go.Figure(
             data=[
                 go.Bar(
                     name="Europe",
                     x= dff1.Year.unique(),
-                    y= dff1.loc[df['continent'] == 'Europe'].groupby('Year')['Total energy consumption (Mtoe)'].mean(),
+                    y= dff1.loc[df['continent'] == 'Europe'].groupby('Year')[tab_string].mean(),
                     marker_color="#004687",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Asia",
                     x= dff1.Year.unique(),
-                    y=dff1.loc[df['continent'] == 'Asia'].groupby('Year')['Total energy consumption (Mtoe)'].mean(),
+                    y=dff1.loc[df['continent'] == 'Asia'].groupby('Year')[tab_string].mean(),
                     marker_color="#AE8F6F",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Oceania",
                     x= dff1.Year.unique(),
-                    y= dff1.loc[df['continent'] == 'Oceania'].groupby('Year')['Total energy consumption (Mtoe)'].mean(),
+                    y= dff1.loc[df['continent'] == 'Oceania'].groupby('Year')[tab_string].mean(),
                     marker_color="#FF9912",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Africa",
                     x= dff1.Year.unique(),
-                    y= dff1.loc[df['continent'] == 'Africa'].groupby('Year')['Total energy consumption (Mtoe)'].mean(),
+                    y= dff1.loc[df['continent'] == 'Africa'].groupby('Year')[tab_string].mean(),
                     marker_color="#4D4D4D",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="North America",
                     x= dff1.Year.unique(),
-                    y= dff1.loc[df['continent'] == 'North America'].groupby('Year')['Total energy consumption (Mtoe)'].mean(),
+                    y= dff1.loc[df['continent'] == 'North America'].groupby('Year')[tab_string].mean(),
                     marker_color="#EE2C2C",
                     opacity=0.8
                 )
@@ -331,41 +415,11 @@ def update_bar_graph(value):
                 xanchor="left",
                 x=0.3
 ))
-    
-    #return plots
-    return fig2
+
+    return fig, bar_hor, button_text , button2_text, piechart, fig2 , header
+
 
 #circle graph of total consumption of all features by country
-@callback(
-            Output(component_id='circle_graph', component_property='figure'),
-            [Input(component_id='country_dropdown', component_property='value'),
-            Input(component_id='simple_slider', component_property='value')])
-
-def update_circle_graph(country_dropdown, value):
-    labels_dict ={'Oil products domestic consumption (Mt)': 'Oil',
-           'Natural gas domestic consumption (bcm)': 'Gas',
-           'Coal and lignite domestic consumption (Mt)': 'Coal', 
-           'Electricity domestic consumption (TWh)': 'Electricity'}
-
-
-    dff2 = df.copy()
-    dff2 = dff2[dff2['Year'] == value]
-    dff2 = dff2[dff2['Country'] == country_dropdown]
-    dff2 = dff2[['Oil products domestic consumption (Mt)','Natural gas domestic consumption (bcm)',
-                'Coal and lignite domestic consumption (Mt)','Electricity domestic consumption (TWh)']]
-
-    piechart=px.pie(
-                data_frame=dff2,
-                values = dff2.values.tolist()[0],
-                names= list(labels_dict.values()),
-                hole=.8,
-            color_discrete_sequence = px.colors.qualitative.Antique)
-    piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
-            "paper_bgcolor": "rgba(0, 0, 0, 0)",
-            },margin={'r':0,'t':0,'l':15,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.45))
-
-    return piechart
-
 
     ######################### COPMARISON GRAPHS #####################
 
