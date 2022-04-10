@@ -1,13 +1,19 @@
+from pydoc import classname
 from dash import Dash, dcc, html, Input, Output, callback
 import pandas as pd
+import dash_bootstrap_components as dbc
+from dash_bootstrap_templates import load_figure_template
 
 import tab_1, tab_2, tab_3, tab_4
 
 # ---------------------------------------------------------------------------------
 # Stile for the app 
-external_stylesheets = ['https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/sketchy/bootstrap.min.css']
+# external_stylesheets = ['https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/minty/bootstrap.min.css']
 
-app = Dash(__name__, external_stylesheets=external_stylesheets)
+# app = Dash(__name__, external_stylesheets=external_stylesheets)
+
+#dbc_css = ("https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.2/dbc.min.css")
+app = Dash(__name__)#, external_stylesheets=[dbc.themes.SOLAR])
 
 # ---------------------------------------------------------------------------------
 # Layout
@@ -28,6 +34,16 @@ app.layout = html.Div([
         dcc.Tab(id="tab-3", label='Tab Three', value='tab-3-example'),
         dcc.Tab(id="tab-4", label='Tab Four', value='tab-4-example')
     ]),
+    # dbc.Tabs(
+    #         [
+    #             dbc.Tab(tab_id="tab-1", label="Tab 1"),
+    #             dbc.Tab(tab_id="tab-2", label="Tab 2"),
+    #             dbc.Tab(tab_id="tab-3", label="Tab 3"),
+    #             dbc.Tab(tab_id="tab-4", label="Tab 4"),
+    #         ],
+    #         id="tabs-example",
+    #         active_tab="tab-1",
+    #     ),
     html.Div(id='tabs-content-example',
              children = tab1)
 ])
