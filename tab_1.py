@@ -52,7 +52,6 @@ layout = html.Div([
         html.Div([
             html.Button("Production",id='Production'),
             html.Button("Consumption",id='Consumption'),
-            html.Button("Comparison",id='Comparison'),
             ])
             ]),
     html.Div(html.H3(tab_string),
