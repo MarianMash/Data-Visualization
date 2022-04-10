@@ -9,70 +9,73 @@ from dash import Dash, dcc, html, Input, Output, callback
 
 # ---------------------------------------------------------------------------------
 # Data import and cleaning
-country_list = ['Portugal', 'Romania', 'Spain', 'Sweden', 'United Kingdom']
+
+file = pd.read_csv("ActualDataset.csv")
+
+# country list for dropdown 
+countryListComparison = []
+for country in file['Country'].unique():
+    countryListComparison.append({'label':str(country),'value':country})
 
 options1 = [{'label': 'Portugal', 'value': 'Portugal'},
            {'label': 'Romania', 'value': 'Romania'},
            {'label': 'Spain', 'value': 'Spain'}, 
            {'label': 'Sweden', 'value': 'Sweden'}, 
            {'label': 'United Kingdom', 'value': 'United Kingdom'}]
-
-file = pd.read_csv("ActualDataset.csv")
-
-
 # ---------------------------------------------------------------------------------
 # Layout of this tab
 
 layout = html.Div([
-    # GRAPH 1
-    html.Div(children = [
-        html.H3('Choose a year baby:'),
-        dcc.Slider(id='comparison_slider',
-                    min = 1990, 
-                    max = 2020, 
-                    step = 1, 
-                    value=1990,  
-                    marks = None,
-                    tooltip={"placement": "bottom", "always_visible": True},
-                    updatemode='drag'), 
-        html.Br(),
-        dcc.RadioItems(
-                ['Linear', 'Log'],
-                'Linear',
-                id='xaxis_type',
-                inline=True
-            ),
-    ], style={'width': '48%', 'display': 'inline-block'}),
-    #),
-    html.Div(children = [
-        html.Label('Choose a Country:'),
-        dcc.Dropdown(
-            id='drop1',
-            options=options1,
-            value='Portugal'),
-        html.Br(),
-        dcc.RadioItems(
-                ['Linear', 'Log'],
-                'Linear',
-                id='yaxis_type',
-                inline=False
-            ),
-    ], style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),
-    #),
-    html.Br(),
     html.Br(),
     html.Br(),
     html.Div([
-            html.Button(id='buttonDefault', children='Default', n_clicks_timestamp=0),
-            html.Button(id='buttonGDP', children='GDP', n_clicks_timestamp=0),
-            html.Button(id='buttonPopulation', children='Population', n_clicks_timestamp=0),
-            html.Button(id='buttonArea', children='Area', n_clicks_timestamp=0),
-            html.Div(id='recentButtonContainer')
+        html.Div([
+            dcc.Interval(id='intervalComponentComparison', interval=1500, n_intervals=0),
+            html.Button(id='buttonPlayComparison', children='Play', style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
+            html.Button(id='buttonPauseComparison', children='Pause', style = {'display': 'inline-block', "margin-left": "10px", "verticalAlign": "middle"}),
+            html.Button(id='buttonResetComparison', children='Reset', style = {'display': 'inline-block', "margin-left": "10px", "verticalAlign": "middle"}),
+            ], style = {'width': '20%',  'float': 'left','display': 'inline-block'}),
+        html.Div([
+            dcc.Slider(id='sliderComparison', min = 1990, max = 2020, step = 1, value=1990, 
+                    marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
+                    tooltip={"placement": "bottom", "always_visible": True}),
+        ], style = {'width': '50%',  'float': 'left','display': 'inline-block'}),
+        html.Div([
+            dcc.Dropdown(
+                id='drop1',
+                options=countryListComparison,
+                value=['Portugal', 'Spain'], 
+                multi = True),
+            html.Br(),
+        ], style={'width': 'auto', 'float': 'middle', 'display': 'inline-block', "margin-left": "10px", "margin-right": "20px"})
+    ], style = {'width': 'auto', 'height': '50px'}),
+    html.Br(),
+    html.Div([
+        html.Button(id='buttonShowSelectedOnly', children='Show Selected Only', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "margin-right": "20px", "verticalAlign": "middle"}),
+        html.Button(id='buttonDefault', children='Default', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
+        html.Button(id='buttonGDP', children='GDP', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
+        html.Button(id='buttonPopulation', children='Population', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
+        html.Button(id='buttonArea', children='Area', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
+        dcc.RadioItems(
+            ['Linear X axis', 'Log X axis'],
+            'Linear X axis',
+            id='xaxis_type',
+            inline=True, 
+            style = {'display': 'inline-block', "margin-left": "40px", "verticalAlign": "middle"}
+        ),
+    
+        dcc.RadioItems(
+            ['Linear Y axis', 'Log Y axis'],
+            'Linear Y axis',
+            id='yaxis_type',
+            inline=True,
+            style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}
+        ),
     ]),
     html.Br(),
     html.Div([
-        dcc.Graph(id='electricity_graph', style={'display': 'inline-block'}),
-        dcc.Graph(id='electricity_bar', style={'display': 'inline-block'}),
+        dcc.Graph(id='electricity_graph', style={'width': '70%', 'display': 'inline-block'}),
+        dcc.Graph(id='electricity_bar', style={'width': '30%', 'float': 'right', 'display': 'inline-block'}),
     ], className = 'row'),
     html.Br(),
     
@@ -80,89 +83,140 @@ layout = html.Div([
 
 ])
 
-# ------------------------------------------------------------------------------
-# Callbacks of this tab
+# ---------------------------------------- CALLBACKS --------------------------------------
 
-@callback(Output('recentButtonContainer', 'children'),
-        [Input('buttonDefault', 'n_clicks_timestamp'),
-        Input('buttonGDP', 'n_clicks_timestamp'),
-        Input('buttonPopulation', 'n_clicks_timestamp'),
-        Input('buttonArea', 'n_clicks_timestamp')])
-def display(btnDefault, btnGDP, btnPopulation, btnArea):
-    timestamps = [btnDefault, btnGDP, btnPopulation, btnArea]
-    return 'button {} was most recently pressed'.format(argmax(timestamps))
+@callback([
+    Output(component_id='intervalComponentComparison', component_property='disabled'),
+    Output(component_id='buttonPlayComparison', component_property='n_clicks'), 
+    Output(component_id='buttonPauseComparison', component_property='n_clicks')],
+    [Input(component_id='buttonPlayComparison', component_property='n_clicks'),
+    Input(component_id='buttonPauseComparison', component_property='n_clicks'),
+    Input(component_id='buttonResetComparison', component_property='n_clicks'),
+    Input('sliderComparison', 'value'),
+    Input('sliderComparison', 'drag_value')])
+def enable_interval_update_comparison(buttonPlay, buttonPause, buttonReset, stepper, dragValue):
+    if not buttonPlay:
+        buttonPlay = 0
+    if not buttonPause:
+        buttonPause = 0
+    if buttonPlay > buttonPause:
+        return False, 1, 0
+    else:
+        return True, 0, 0
+
+@callback(
+    [Output('sliderComparison', 'value'),
+    Output(component_id='buttonResetComparison', component_property='n_clicks'),
+    Output('intervalComponentComparison', 'n_intervals')], 
+    [Input('intervalComponentComparison', 'n_intervals'), 
+    Input(component_id='buttonResetComparison', component_property='n_clicks'),
+    Input('sliderComparison', 'drag_value')])
+def on_click_comparison(n_intervals, buttonReset, dragValue):
+    if buttonReset is None:
+        buttonReset = 0
+    if n_intervals is None:
+        return 0
+    if dragValue is None:
+        dragValue = 1990
+    
+    if buttonReset > 0:
+        return 1990, 0, 0 
+    
+    if int(dragValue) - 1989 != n_intervals:
+        n_intervals = int(dragValue) -1990
+
+    return 1990 + (n_intervals)%30, 0, n_intervals
 
 @callback(
     [Output('electricity_graph', 'figure'),
     Output('electricity_bar', 'figure')],
-    [Input('comparison_slider', 'value'), 
+    [Input('sliderComparison', 'value'), 
     Input('drop1', 'value'),
     Input('xaxis_type', 'value'),
     Input('yaxis_type', 'value'),
+    Input('buttonShowSelectedOnly', 'n_clicks'),
     Input('buttonDefault', 'n_clicks_timestamp'),
     Input('buttonGDP', 'n_clicks_timestamp'),
     Input('buttonPopulation', 'n_clicks_timestamp'),
     Input('buttonArea', 'n_clicks_timestamp')])
 
-def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, btnDefault, btnGDP, btnPopulation, btnArea):
-    # add default marker size column 
-    file['default_size'] = 0.3
+def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, btnSelected, btnDefault, btnGDP, btnPopulation, btnArea):
+    # add area column!!!
+    file['default_size'] = 1
+    file['area'] = 1
+    file['scatterColor'] = 'default'
     
     # select year  
-    dff = file[file['Year'] == slider_value]
+    if btnSelected is None: 
+        btnSelected = 0
+    if btnSelected % 2 == 0: 
+        dff = file[file['Year'] == slider_value]
+    else:
+        dff = file[file['Year'] == slider_value]
+        #dff = file[(file['Country'].isin([drop1_value])) & (file['Year'] == slider_value)]
     
+
     # save values of the selected country
-    selectedCountryX = float(dff[dff['Country'] == drop1_value]['Total energy production (Mtoe)'])
-    selectedCountryY = float(dff[dff['Country'] == drop1_value]['Total energy consumption (Mtoe)'])
+    selectedCountryX = float(dff[dff['Country'] == drop1_value[0]]['Total energy production (Mtoe)'])
+    selectedCountryY = float(dff[dff['Country'] == drop1_value[0]]['Total energy consumption (Mtoe)'])
 
     # select marker size column based on imputs from the buttons
     timestampsDict = {
         'default_size': btnDefault, 
         'gdp_md_est': btnGDP, 
         'pop_est': btnPopulation,
-        'default_size': btnArea
+        'area': btnArea
     }
     sizePicker = max(timestampsDict.items(), key=operator.itemgetter(1))[0]
-    sizeSeries = dff[sizePicker] * 2
+
+    for dropSelection in drop1_value:
+        i = dff[dff['Country']==dropSelection].index.values[0]
+        dff.loc[i, 'scatterColor'] = dropSelection
 
     fig = px.scatter(data_frame=dff, 
                     x = 'Total energy production (Mtoe)',
                     y = 'Total energy consumption (Mtoe)',
-                    size = sizeSeries, 
-                    hover_name = 'Country')
-
+                    size = sizePicker, 
+                    hover_name = 'Country', 
+                    color = 'scatterColor', 
+                    category_orders={'scatterColor': [dropSelection for dropSelection in drop1_value]})
+    if sizePicker == 'default_size':
+        fig.update_traces(marker={'size': 10})
     fig.update_layout(margin={'l': 40, 'b': 40, 't': 10, 'r': 0}, hovermode='closest')
-
     fig.update_xaxes(title = 'Total energy production',
-                     type='linear' if xaxis_type == 'Linear' else 'log')
-
+                     type='linear' if xaxis_type == 'Linear X axis' else 'log')
     fig.update_yaxes(title = 'Total energy consumption',
-                     type='linear' if yaxis_type == 'Linear' else 'log')
+                     type='linear' if yaxis_type == 'Linear Y axis' else 'log')
 
-    fig.add_trace(go.Scatter(x = dff[dff['Country'] == drop1_value]['Total energy production (Mtoe)'], 
-                        y = dff[dff['Country'] == drop1_value]['Total energy consumption (Mtoe)'], 
-                        mode = 'markers',
-                        marker_symbol = 'star',
-                        marker_size = 15, 
-                        showlegend = False))
-
+    # ----------------- BARPLOT -----------------
     barNames = ['Production', 'Consumption']
-    barValues = []
-    if xaxis_type == 'Linear':
-        barValues.append(selectedCountryX)
-    else:
-        barValues.append(log(selectedCountryX))
+    dataHolder = []
+    for dropSelection in drop1_value:
+        selectedCountryX = float(dff[dff['Country'] == dropSelection]['Total energy production (Mtoe)'])
+        selectedCountryY = float(dff[dff['Country'] == dropSelection]['Total energy consumption (Mtoe)'])
+        
+        barValues = []
+        if xaxis_type == 'Linear':
+            barValues.append(selectedCountryX)
+        else:
+            barValues.append(log(selectedCountryX))
 
-    if yaxis_type == 'Linear':
-        barValues.append(selectedCountryY)
-    else:
-        barValues.append(log(selectedCountryY))
-    
-    data = [go.Bar(
-    x = barNames,
-    y = barValues
-    )]
+        if yaxis_type == 'Linear':
+            barValues.append(selectedCountryY)
+        else:
+            barValues.append(log(selectedCountryY))
 
-    figBar = go.Figure(data=data)
+        dataHolder.append(
+            go.Bar(
+                name = dropSelection,
+                x = barNames,
+                y = barValues,
+            )
+        )
+
+    figBar = go.Figure(data=dataHolder)
+    #figBar.update(figBar, showlegend="false")
+    for trace in figBar['data']:
+        trace['showlegend'] = False
 
     return fig, figBar
