@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px  # (version 4.7.0 or higher)
 import plotly
 import plotly.graph_objects as go
+import dash_bootstrap_components as dbc
 
 
 #pip install geojson
@@ -50,8 +51,8 @@ layout = html.Div([
 
     html.Div(children = [
         html.Div([
-            html.Button("Production",id='Production'),
-            html.Button("Consumption",id='Consumption'),
+            html.Button("Production",id='Production', className="btn btn-success"),
+            html.Button("Consumption",id='Consumption', className="btn btn-info"),
             ])
             ]),
     html.Div(html.H3(tab_string),
@@ -60,9 +61,9 @@ layout = html.Div([
     ,
     html.Div(children = [
         html.Div([
-            html.Button(id='buttonPlay', children='Play'),
-            html.Button(id='buttonPause', children='Pause'),
-            html.Button(id='buttonReset', children='Reset'),
+            html.Button(id='buttonPlay', children='Play', className="btn btn-success"),
+            html.Button(id='buttonPause', children='Pause', className="btn btn-warning"),
+            html.Button(id='buttonReset', children='Reset', className="btn btn-primary"),
             dcc.Interval(id='interval-component', interval=1500, n_intervals=0)], style={'width': '15%', 'display': 'inline-block'}),
         html.Div([
             dcc.Slider(id='my_slider', min = 1990, max = 2020, step = 1, value=1990, 
@@ -72,8 +73,8 @@ layout = html.Div([
                     )], style={'width': '75%', 'display': 'inline-block'}),
         html.Br(),
         html.Br(),
-        html.Button('Largest', id='sort_button', n_clicks=0),
-        html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"})],
+        html.Button('Largest', id='sort_button', n_clicks=0, className="btn btn-light"),
+        html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="btn btn-light")],
     ),
     html.Div(children=[
                     dcc.Graph(id="bar_hor_1", style={'display': 'inline-block','width': '34%'}),
@@ -122,8 +123,17 @@ layout = html.Div([
     html.Br(),
     html.Br(),
     html.Div(children= [
-        dcc.Graph(id='bar_chart_2', style={"width": "70%",'display': 'inline-block'}),
-        dcc.Graph(id='circle_graph', style={"width": "30%",'display': 'inline-block'})]),
+        dbc.Card(
+            dbc.CardBody(
+                [
+                    dcc.Graph(id='bar_chart_2', style={"width": "70%",'display': 'inline-block'}),
+                    dcc.Graph(id='circle_graph', style={"width": "30%",'display': 'inline-block'})
+                ]
+            ),
+            className="card text-white bg-secondary",
+        )]),
+        # dcc.Graph(id='bar_chart_2', style={"width": "70%",'display': 'inline-block'}),
+        # dcc.Graph(id='circle_graph', style={"width": "30%",'display': 'inline-block'})]),
     html.Br(),
     
     html.Br(),
