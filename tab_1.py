@@ -1,3 +1,4 @@
+from re import A
 from dash import dcc, html, Input, Output, callback, callback_context
 import pandas as pd
 import plotly.express as px  # (version 4.7.0 or higher)
@@ -23,6 +24,7 @@ df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 tab_string = 'Total energy production (Mtoe)'
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
+last = 'Total energy consumption (Mtoe)'
 
 with open("geojson11.geojson") as f:
     gj = geojson.load(f)
@@ -222,14 +224,15 @@ def on_click(n_intervals, buttonReset, dragValue):
     [Input(component_id = 'my_slider', component_property = 'value'),
     Input(component_id = 'Normalized', component_property = 'n_clicks'),
     Input(component_id = 'sort_button', component_property = 'n_clicks'),
-    Input(component_id = 'Production', component_property = 'n_clicks'),
-    Input(component_id = 'Consumption', component_property = 'n_clicks'),
+    Input(component_id = 'Production', component_property = 'n_clicks_timestamp'),
+    Input(component_id = 'Consumption', component_property = 'n_clicks_timestamp'),
     Input(component_id ='country_dropdown', component_property = 'value'),
     Input(component_id ='simple_slider', component_property = 'value'),
-    Input(component_id = 'range_slider', component_property = 'value')
+    Input(component_id = 'range_slider', component_property = 'value'),
+    Input(component_id = 'ticker_header', component_property = 'children')
     ])
 
-def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Button, Con_Button,country_dropdown, value_pie, value_bar):
+def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_Button, Con_Time_Button, country_dropdown, value_pie, value_bar,header_value):
     dff = df.copy()
     dff = dff[dff["Year"]==selected_year]
     
@@ -238,23 +241,31 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Button, 
 
     # Normalize Button
         # Production or Consumption
-    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+    
+    # initialize Timestamps if they're not clicked yet
+
+    if Con_Time_Button is None:
+        Con_Time_Button = 0
+    if Prod_Time_Button is None:
+        Prod_Time_Button = 0
+
     list_1 = production
     tab_string = 'Total energy production (Mtoe)'
 
     header = [html.H3(tab_string)]
-    if 'Production' in changed_id:
+    
+### determine which button was clicked last by comparing timestamps
+    if Prod_Time_Button<Con_Time_Button:
+        list_1 = consumption
+        tab_string = 'Total energy consumption (Mtoe)'
+        header = [html.H3(tab_string)]
+
+    if Prod_Time_Button > Con_Time_Button:
         list_1 = production 
         tab_string = 'Total energy production (Mtoe)'
     
         header = [html.H3(tab_string)]
         
-    elif 'Consumption' in changed_id:
-        list_1 = consumption
-        tab_string = 'Total energy consumption (Mtoe)'
-        header = [html.H3(tab_string)]
-    else: 
-        next
 
 
 ### Absolute or relative
@@ -341,7 +352,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Button, 
     bar_hor.update_xaxes(visible=False, showticklabels=False)
     bar_hor.update(layout_coloraxis_showscale=False)
 
-
+    
      ########################################################################################################################################
     #PieChart
  
