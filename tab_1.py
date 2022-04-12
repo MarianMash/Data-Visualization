@@ -45,6 +45,20 @@ countries = []
 for country in df['Country'].unique():
     countries.append({'label':str(country),'value':country})
 
+# To be removed 
+card_content = [
+    dbc.CardHeader("Card header"),
+    dbc.CardBody(
+        [
+            html.H5("Card title", className="card-title"),
+            html.P(
+                "This is some card content that we'll reuse",
+                className="card-text",
+            ),
+        ]
+    ),
+]
+
 
 # ---------------------------------------------------------------------------------
 # Layout of this tab
@@ -53,8 +67,8 @@ layout = html.Div([
 
     html.Div(children = [
         html.Div([
-            html.Button("Production",id='Production', className="btn btn-success"),
-            html.Button("Consumption",id='Consumption', className="btn btn-info"),
+            html.Button("Production",id='Production', className="m-1 btn btn-success"),
+            html.Button("Consumption",id='Consumption', className="m-1 btn btn-info"),
             ])
             ]),
     html.Div(html.H3(tab_string),
@@ -63,10 +77,10 @@ layout = html.Div([
     ,
     html.Div(children = [
         html.Div([
-            html.Button(id='buttonPlay', children='Play', className="btn btn-success"),
-            html.Button(id='buttonPause', children='Pause', className="btn btn-warning"),
-            html.Button(id='buttonReset', children='Reset', className="btn btn-primary"),
-            dcc.Interval(id='interval-component', interval=1500, n_intervals=0)], style={'width': '15%', 'display': 'inline-block'}),
+            html.Button(id='buttonPlay', children='Play', className="m-1 btn btn-success"),
+            html.Button(id='buttonPause', children='Pause', className="m-1 btn btn-warning"),
+            html.Button(id='buttonReset', children='Reset', className="m-1 btn btn-primary"),
+            dcc.Interval(id='interval-component', interval=1500, n_intervals=0)], className="m-3"),
         html.Div([
             dcc.Slider(id='my_slider', min = 1990, max = 2020, step = 1, value=1990, 
                     marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
@@ -75,8 +89,8 @@ layout = html.Div([
                     )], style={'width': '75%', 'display': 'inline-block'}),
         html.Br(),
         html.Br(),
-        html.Button('Largest', id='sort_button', n_clicks=0, className="btn btn-light"),
-        html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="btn btn-light")],
+        html.Button('Largest', id='sort_button', n_clicks=0, className="m-3 btn btn-light"),
+        html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")],
     ),
     html.Div(children=[
                     dcc.Graph(id="bar_hor_1", style={'display': 'inline-block','width': '34%'}),
@@ -88,52 +102,52 @@ layout = html.Div([
     ########################### CONSUMPTION ######################x
    # html.H3('Total energy consumption (Mtoe)'),
     html.Br(),
-    html.Div([dcc.Slider(id='simple_slider',
-                min = 1990, 
-                max = 2020, 
-                step = 1, 
-                value=1990,  
-                marks = None,
-                tooltip={"placement": "bottom", "always_visible": True},
-                updatemode='drag',
+    # html.Div([dcc.Slider(id='simple_slider',
+    #             min = 1990, 
+    #             max = 2020, 
+    #             step = 1, 
+    #             value=1990,  
+    #             marks = None,
+    #             tooltip={"placement": "bottom", "always_visible": True},
+    #             updatemode='drag',
                 
-                )],style={'width': '30%',"float":"right"}),
+    #             )],style={'width': '30%',"float":"right"}),
 
-    html.Div(children= [
-        html.Div([dcc.RangeSlider(id="range_slider",
-                    min=1990,
-                    max=2020,
-                    value=[1995, 2015   ],
-                    step = 1,
-                    className="dcc_control",
-                    marks = None,
-                    tooltip={"placement": "bottom", "always_visible": True},
-                    updatemode='drag')],
-                    style={'width': '70%', 'display': 'inline-block'}),
+    # html.Div(children= [
+    #     html.Div([dcc.RangeSlider(id="range_slider",
+    #                 min=1990,
+    #                 max=2020,
+    #                 value=[1995, 2015   ],
+    #                 step = 1,
+    #                 className="dcc_control",
+    #                 marks = None,
+    #                 tooltip={"placement": "bottom", "always_visible": True},
+    #                 updatemode='drag')],
+    #                 style={'width': '70%', 'display': 'inline-block'}),
 
         
-        dcc.Dropdown(
-        options= countries,
-        value='Portugal',
-        id='country_dropdown',
-        style={"width": "30%",'display': 'inline-block', "float": "right"}
-        ),
+    #     dcc.Dropdown(
+    #     options= countries,
+    #     value='Portugal',
+    #     id='country_dropdown',
+    #     style={"width": "30%",'display': 'inline-block', "float": "right"}
+    #     ),
 
-    ]),
+    # ]),
    
     
     html.Br(),
     html.Br(),
-    html.Div(children= [
-        dbc.Card(
-            dbc.CardBody(
-                [
-                    dcc.Graph(id='bar_chart_2', style={"width": "70%",'display': 'inline-block'}),
-                    dcc.Graph(id='circle_graph', style={"width": "30%",'display': 'inline-block'})
-                ]
-            ),
-            className="card text-white bg-secondary",
-        )]),
+    # html.Div(children= [
+    #     dbc.Card(
+    #         dbc.CardBody(
+    #             [
+    #                 dcc.Graph(id='bar_chart_2', style={"width": "70%",'display': 'inline-block'}),
+    #                 dcc.Graph(id='circle_graph', style={"width": "30%",'display': 'inline-block'})
+    #             ]
+    #         ),
+    #         className="card text-white bg-secondary",
+    #     )]),
         # dcc.Graph(id='bar_chart_2', style={"width": "70%",'display': 'inline-block'}),
         # dcc.Graph(id='circle_graph', style={"width": "30%",'display': 'inline-block'})]),
     html.Br(),
@@ -144,11 +158,59 @@ layout = html.Div([
 
     html.Br(),
 
-    
+    html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(dbc.Card(card_content, color="primary", inverse=True)),
+                dbc.Col(dbc.Card(card_content, color="secondary", inverse=True)),
+                dbc.Col(dbc.Card(card_content, color="info", inverse=True)),
+            ],
+            className="mb-4",
+        ),
+        dbc.Row(
+            [
+                dbc.Col(dbc.Card(card_content, color="success", inverse=True)),
+                dbc.Col(dbc.Card(card_content, color="warning", inverse=True)),
+                dbc.Col(dbc.Card(card_content, color="danger", inverse=True)),
+            ],
+            className="mb-4",
+        ),
+        dbc.Row(
+            [
+                dbc.Col(dbc.Card([dcc.RangeSlider(id="range_slider",
+                                                    min=1990,
+                                                    max=2020,
+                                                    value=[1995, 2015   ],
+                                                    step = 1,
+                                                    className="dcc_control",
+                                                    marks = None,
+                                                    tooltip={"placement": "bottom", "always_visible": True},
+                                                    updatemode='drag'),
+                                dcc.Graph(id='bar_chart_2')],
+                                color="light"),width=8),
+                dbc.Col(dbc.Card([dcc.Slider(id='simple_slider',
+                                            min = 1990, 
+                                            max = 2020, 
+                                            step = 1, 
+                                            value=1990,  
+                                            marks = None,
+                                            tooltip={"placement": "bottom", "always_visible": True},
+                                            updatemode='drag',
+                                            style={"margin-left": "15px"}),
+                                dcc.Dropdown(options= countries,
+                                            value='Portugal',
+                                            id='country_dropdown'),
+                                dcc.Graph(id='circle_graph')],
+                                color="secondary", inverse=True),width=4),
+            ]
+        ),
+    ]
+)
 
     
     
-])
+], className="m-3")
 
 # ------------------------------------------------------------------------------
 # Callbacks of this tab
