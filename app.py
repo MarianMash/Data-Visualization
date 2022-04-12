@@ -47,7 +47,7 @@ app.layout = html.Div([
             ],
             id="tabs-example",
             active_tab="tab-1-example",
-            className="nav nav-pills nav-fill"
+            className="m-3 nav nav-pills nav-fill"
         ),
     html.Div(id='tabs-content-example',
              children = tab1)
