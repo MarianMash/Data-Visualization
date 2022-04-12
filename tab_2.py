@@ -4,6 +4,8 @@ import plotly.express as px  # (version 4.7.0 or higher)
 import plotly
 import plotly.graph_objects as go
 
+from tab_1 import bar_plot_cs
+
 
 #pip install geojson
 import geojson
@@ -24,6 +26,10 @@ df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
 with open("geojson11.geojson") as f:
     gj = geojson.load(f)
+
+
+####################################
+
 # ---------------------------------------------------------------------------------
 # Layout of this tab
 
@@ -61,8 +67,9 @@ layout = html.Div([
     html.Br(),
     html.Br(),
 
-    html.Div(children= [
-        html.Div([dcc.RangeSlider(id="interval_slider",
+    html.A(html.Button('Show World'),href='/'), #### this one can be improved
+    
+    html.Div([dcc.RangeSlider(id="interval_slider",
                     min=1990,
                     max=2020,
                     value=[1995, 2015   ],
@@ -70,10 +77,10 @@ layout = html.Div([
                     className="dcc_control",
                     marks = None,
                     tooltip={"placement": "bottom", "always_visible": True},
-                    updatemode='drag')],
-                    style={'width': '70%', 'display': 'inline-block'})
-                    ]),
-    dcc.Graph(id='bar_chart_2_2')
+                    updatemode='drag')]),
+    dcc.Graph(id='bar_plot_2_2'),
+                    
+
     ########################### CONSUMPTION ######################x
 ])
 
@@ -132,15 +139,15 @@ def on_click(n_intervals, buttonReset, dragValue):
     return 1990 + (n_intervals)%30, 0, n_intervals
 
 
-@callback([
+@callback(
     Output(component_id='Header_elec', component_property='children'),
 
     Output(component_id = 'Button_for_Sorting', component_property = 'children'),
     Output(component_id = 'Button_for_Normalize', component_property = 'children'),
     Output(component_id ='world_plot',component_property = 'figure'),
-    Output(component_id ='bar_plot',component_property = 'figure'), 
-    Output(component_id ='bar_chart_2_2', component_property ='figure')
-    ],
+    Output(component_id ='bar_plot',component_property = 'figure'),
+    Output(component_id ='bar_plot_2_2',component_property = 'figure'),
+
 
     [Input(component_id = 'Slider', component_property = 'value'),
     Input(component_id = 'Prod_1', component_property = 'n_clicks_timestamp'),
@@ -148,8 +155,10 @@ def on_click(n_intervals, buttonReset, dragValue):
     Input(component_id = 'Button_for_Normalize', component_property = 'n_clicks'),
     Input(component_id = 'Button_for_Sorting', component_property = 'n_clicks'),
     Input(component_id = 'interval_slider', component_property = 'value'),
+    Input(component_id ='world_plot',component_property = 'clickData'),
+
     ])
-def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_button_value,sort_button2_value,value_bar):
+def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_button_value,sort_button2_value,value_bar,c_selection):
     dff = df.copy()
     dff = dff[dff["Year"]==selected_year]
     
@@ -323,6 +332,18 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
                 y=-0.2,
                 xanchor="left",
                 x=0.3
-))
+    ))
 
-    return header, button_text , button2_text, fig, bar_hor, fig2 
+    if c_selection is not None:
+        
+        location = c_selection['points'][0]['location']
+        cs_name = dff[dff.iso_a3 == location]["Country"].to_list()[0]
+
+        figure1 = bar_plot_cs(df,value_bar,cs_name,tab_string)
+
+        
+        return header, button_text , button2_text, fig, bar_hor, figure1 
+    else:
+        # fig2 =  fig2
+
+        return header, button_text , button2_text, fig, bar_hor, fig2 
