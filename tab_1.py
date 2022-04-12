@@ -65,39 +65,93 @@ card_content = [
 
 layout = html.Div([
 
-    html.Div(children = [
-        html.Div([
-            html.Button("Production",id='Production', className="m-1 btn btn-success"),
-            html.Button("Consumption",id='Consumption', className="m-1 btn btn-info"),
-            ])
-            ]),
-    html.Div(html.H3(tab_string),
-        id='ticker_header'
-    )
-    ,
-    html.Div(children = [
-        html.Div([
-            html.Button(id='buttonPlay', children='Play', className="m-1 btn btn-success"),
-            html.Button(id='buttonPause', children='Pause', className="m-1 btn btn-warning"),
-            html.Button(id='buttonReset', children='Reset', className="m-1 btn btn-primary"),
-            dcc.Interval(id='interval-component', interval=1500, n_intervals=0)], className="m-3"),
-        html.Div([
-            dcc.Slider(id='my_slider', min = 1990, max = 2020, step = 1, value=1990, 
-                    marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
-                    tooltip={"placement": "bottom", "always_visible": True},
-                    #updatemode='drag'
-                    )], style={'width': '75%', 'display': 'inline-block'}),
-        html.Br(),
-        html.Br(),
-        html.Button('Largest', id='sort_button', n_clicks=0, className="m-3 btn btn-light"),
-        html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")],
-    ),
-    html.Div(children=[
-                    dcc.Graph(id="bar_hor_1", style={'display': 'inline-block','width': '34%'}),
-                    dcc.Graph(id="world", style={'display': 'inline-block','width': '64%'}),
-                    ]),
+    # html.Div(children = [
+    #                     html.Div([
+    #                             html.Button("Production",id='Production', className="m-1 btn btn-success"),
+    #                             html.Button("Consumption",id='Consumption', className="m-1 btn btn-info"),
+    #                             ])
+    #                     ]),
+    # html.Div(html.H3(tab_string),id='ticker_header'),
+    # html.Div(children = [
+    #             html.Div([
+    #                 html.Button(id='buttonPlay', children='Play', className="m-1 btn btn-success"),
+    #                 html.Button(id='buttonPause', children='Pause', className="m-1 btn btn-warning"),
+    #                 html.Button(id='buttonReset', children='Reset', className="m-1 btn btn-primary"),
+    #                 dcc.Interval(id='interval-component', interval=1500, n_intervals=0)], className="m-3"),
+    #             html.Div([
+    #                 dcc.Slider(id='my_slider', min = 1990, max = 2020, step = 1, value=1990, 
+    #                         marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
+    #                         tooltip={"placement": "bottom", "always_visible": True},
+    #                         #updatemode='drag'
+    #                         )], style={'width': '75%', 'display': 'inline-block'}),
+    #             html.Br(),
+    #             html.Br(),
+    #             html.Button('Largest', id='sort_button', n_clicks=0, className="m-3 btn btn-light"),
+    #             html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")],
+    #         ),
+    # html.Div(children=[
+    #                 dcc.Graph(id="bar_hor_1", style={'display': 'inline-block','width': '34%'}),
+    #                 dcc.Graph(id="world", style={'display': 'inline-block','width': '64%'}),
+    #                 ]),
     html.Br(),
     html.Br(),
+
+    html.Div(
+            [   
+                #Buttons Production-Consumption
+                dbc.Row(
+                    [
+                        html.Div(children = [
+                        html.Div([
+                                html.Button("Production",id='Production', className="m-1 btn btn-success"),
+                                html.Button("Consumption",id='Consumption', className="m-1 btn btn-info"),
+                                ])
+                        ])
+                    ]
+                ),
+                #Title 
+                dbc.Row(
+                    [
+                        html.Div(html.H3(tab_string),id='ticker_header')
+                    ]
+                ),
+                #Buttons and slider
+                dbc.Row(
+                    [
+                        html.Div(children = [
+                                    html.Div([
+                                        html.Button(id='buttonPlay', children='Play', className="m-1 btn btn-success"),
+                                        html.Button(id='buttonPause', children='Pause', className="m-1 btn btn-warning"),
+                                        html.Button(id='buttonReset', children='Reset', className="m-1 btn btn-primary"),
+                                        dcc.Interval(id='interval-component', interval=1500, n_intervals=0)], className="m-3"),
+                                    html.Div([
+                                        dcc.Slider(id='my_slider', min = 1990, max = 2020, step = 1, value=1990, 
+                                                marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
+                                                tooltip={"placement": "bottom", "always_visible": True},
+                                                #updatemode='drag'
+                                                )], style={'width': '75%', 'display': 'inline-block'}),
+                                    html.Br(),
+                                    html.Br(),
+                                    html.Button('Largest', id='sort_button', n_clicks=0, className="m-3 btn btn-light"),
+                                    html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")],
+                                ),
+                    ]
+                ),
+                #Bar chart and map graph
+                dbc.Row(
+                    [
+                        dbc.Col(dbc.Card([html.Br(className="mb-6"),
+                                        dcc.Graph(id="bar_hor_1"),
+                                        html.Br(className="mb-6")],
+                                        color="secondary"),width=4),
+                        dbc.Col(dbc.Card([html.Br(className="mb-6"),
+                                        dcc.Graph(id="world"),
+                                        html.Br(className="mb-6")],
+                                        color="secondary", inverse=True),width=8),
+                    ]
+                ),
+            ]
+        ),
 
     ########################### CONSUMPTION ######################x
    # html.H3('Total energy consumption (Mtoe)'),
@@ -160,25 +214,12 @@ layout = html.Div([
 
     html.Div(
     [
+
         dbc.Row(
             [
-                dbc.Col(dbc.Card(card_content, color="primary", inverse=True)),
-                dbc.Col(dbc.Card(card_content, color="secondary", inverse=True)),
-                dbc.Col(dbc.Card(card_content, color="info", inverse=True)),
-            ],
-            className="mb-4",
-        ),
-        dbc.Row(
-            [
-                dbc.Col(dbc.Card(card_content, color="success", inverse=True)),
-                dbc.Col(dbc.Card(card_content, color="warning", inverse=True)),
-                dbc.Col(dbc.Card(card_content, color="danger", inverse=True)),
-            ],
-            className="mb-4",
-        ),
-        dbc.Row(
-            [
-                dbc.Col(dbc.Card([dcc.RangeSlider(id="range_slider",
+                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per continent"),
+                                    html.Br(className="mb-6"),
+                                    dcc.RangeSlider(id="range_slider",
                                                     min=1990,
                                                     max=2020,
                                                     value=[1995, 2015   ],
@@ -187,21 +228,27 @@ layout = html.Div([
                                                     marks = None,
                                                     tooltip={"placement": "bottom", "always_visible": True},
                                                     updatemode='drag'),
-                                dcc.Graph(id='bar_chart_2')],
+                                    html.Br(className="mb-6"),
+                                dcc.Graph(id='bar_chart_2'),
+                                html.Br(className="mb-6")],
                                 color="light"),width=8),
-                dbc.Col(dbc.Card([dcc.Slider(id='simple_slider',
-                                            min = 1990, 
-                                            max = 2020, 
-                                            step = 1, 
-                                            value=1990,  
-                                            marks = None,
-                                            tooltip={"placement": "bottom", "always_visible": True},
-                                            updatemode='drag',
-                                            style={"margin-left": "15px"}),
-                                dcc.Dropdown(options= countries,
-                                            value='Portugal',
-                                            id='country_dropdown'),
-                                dcc.Graph(id='circle_graph')],
+                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per Country a and energy type"),
+                                    html.Br(className="mb-6"),
+                                    dbc.Row([dcc.Slider(id='simple_slider',
+                                                        min = 1990, 
+                                                        max = 2020, 
+                                                        step = 1, 
+                                                        value=1990,  
+                                                        marks = None,
+                                                        tooltip={"placement": "bottom", "always_visible": True},
+                                                        updatemode='drag'),
+                                            dcc.Dropdown(options= countries,
+                                                        value='Portugal',
+                                                        id='country_dropdown')
+                                            ]),
+                                    html.Br(className="mb-6"),
+                                dcc.Graph(id='circle_graph'),
+                                html.Br(className="mb-6")],
                                 color="secondary", inverse=True),width=4),
             ]
         ),
