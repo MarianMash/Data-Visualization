@@ -1,4 +1,3 @@
-from pickle import LIST
 from pydoc import classname
 from re import A, template
 from turtle import width
@@ -60,29 +59,47 @@ def bar_plot_cs(df, value, location,tab_string):
     )
     return fig_cs
 
-def pie_func(df,value_pie,country_dropdown,list_1 = None):
-
-
+def pie_func(df,value_pie,cs_name,list_1): 
     labels_dict ={list_1[0]: 'Oil',
         list_1[1]: 'Gas',
         list_1[2]: 'Coal', 
         list_1[3]: 'Electricity'}
 
-
     dff2 = df.copy()
     dff2 = dff2[dff2['Year'] == value_pie]
-    dff2 = dff2[dff2['Country'] == country_dropdown]
-    dff2 = dff2[list_1]
+    
+    if cs_name == 1:
+        dff3 = dff2.copy()
+        dff3 = dff3[list_1]
+        dff3 = dff3.fillna(0)
+        dff3 = dff3.replace('n.a.', 0)
+        dff3[list_1[1]] = pd.to_numeric(dff3[list_1[1]])
+        dff3[list_1[2]] = pd.to_numeric(dff3[list_1[2]])
+        dff3 = dff3.sum()
 
-    piechart=px.pie(
-                data_frame=dff2,
-                values = dff2.values.tolist()[0],
+        piechart=px.pie(
+                data_frame=dff3,
+                values = dff3.values.tolist(),
                 names= list(labels_dict.values()),
                 hole=.8,
             color_discrete_sequence = px.colors.qualitative.Antique)
-    piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
-            "paper_bgcolor": "rgba(0, 0, 0, 0)",
-            },margin={'r':10,'t':0,'l':0,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.40))
+        piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
+                "paper_bgcolor": "rgba(0, 0, 0, 0)"},
+                margin={'r':10,'t':0,'l':0,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.40))
+
+    else:
+        dff2 = dff2[dff2['Country'] == cs_name]
+        dff2 = dff2[list_1]
+
+        piechart=px.pie(
+                    data_frame=dff2,
+                    values = dff2.values.tolist()[0],
+                    names= list(labels_dict.values()),
+                    hole=.8,
+                color_discrete_sequence = px.colors.qualitative.Antique)
+        piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
+                "paper_bgcolor": "rgba(0, 0, 0, 0)",
+                },margin={'r':10,'t':0,'l':0,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.40))
     return piechart
 
 # Accesstoken for Mapbox-API
@@ -280,9 +297,9 @@ layout = html.Div([
                                                         marks = None,
                                                         tooltip={"placement": "bottom", "always_visible": True},
                                                         updatemode='drag'),
-                                            dcc.Dropdown(options= countries,
-                                                        value='Portugal',
-                                                        id='country_dropdown')
+                                            #dcc.Dropdown(options= countries,
+                                            #            value='Portugal',
+                                            #            id='country_dropdown')
                                             ]),
                                     html.Br(className="mb-6"),
                                 dcc.Graph(id='circle_graph')],
@@ -372,14 +389,14 @@ def on_click(n_intervals, buttonReset, dragValue):
     Input(component_id = 'sort_button', component_property = 'n_clicks'),
     Input(component_id = 'Production', component_property = 'n_clicks_timestamp'),
     Input(component_id = 'Consumption', component_property = 'n_clicks_timestamp'),
-    Input(component_id ='country_dropdown', component_property = 'value'),
+    #Input(component_id ='country_dropdown', component_property = 'value'),
     Input(component_id ='simple_slider', component_property = 'value'),
     Input(component_id = 'range_slider', component_property = 'value'),
     Input(component_id = 'ticker_header', component_property = 'children'),
     Input(component_id ='world',component_property = 'clickData'),
     ])
 
-def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_Button, Con_Time_Button, country_dropdown, value_pie, value_bar,header_value,c_selection):
+def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_Button, Con_Time_Button, value_pie, value_bar,header_value,c_selection):
     dff = df.copy()
     dff = dff[dff["Year"]==selected_year]
     
@@ -473,7 +490,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
                             colorbar_orientation = "v",
                             colorbar_ticks = "inside")
 
-    #fig.update(layout_showlegend=False)
+    fig.update(layout_showlegend=False)
 
 
 
@@ -504,30 +521,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
 
     
      ########################################################################################################################################
-    #PieChart##
- 
-  
-    labels_dict ={list_1[0]: 'Oil',
-           list_1[1]: 'Gas',
-           list_1[2]: 'Coal', 
-           list_1[3]: 'Electricity'}
-
-
-    dff2 = df.copy()
-    dff2 = dff2[dff2['Year'] == value_pie]
-    dff2 = dff2[dff2['Country'] == country_dropdown]
-    dff2 = dff2[list_1]
-
-    piechart=px.pie(
-                data_frame=dff2,
-                values = dff2.values.tolist()[0],
-                names= list(labels_dict.values()),
-                hole=.8,
-            color_discrete_sequence = px.colors.qualitative.Antique)
-    piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
-            "paper_bgcolor": "rgba(0, 0, 0, 0)",
-            },margin={'r':10,'t':0,'l':0,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.40))
-
+   
 
     ########################################## Barchart ##############################################################################################
 
@@ -598,7 +592,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
         return fig, bar_hor, button_text , button2_text, piechart, figure1 , header
     else:
         # fig2 =  fig2
-        piechart = pie_func(df,value_pie,country_dropdown,list_1)
+        piechart = pie_func(df,value_pie,1,list_1)
 
         return fig, bar_hor, button_text , button2_text, piechart, fig2 , header
 
