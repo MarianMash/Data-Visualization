@@ -81,7 +81,7 @@ layout = html.Div([
 
 ])
 
-# ---------------------------------------- CALLBACKS --------------------------------------
+# ---------------------------------------- CALLBACKS --------------------------------------##
 
 @callback([
     Output(component_id='intervalComponentComparison', component_property='disabled'),

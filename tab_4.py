@@ -61,7 +61,7 @@ layout = html.Div([
                         dcc.Graph(id="EL_world_plot", style={'display': 'inline-block','width': '64%'}),
                         ]),
     html.Br(),
-    html.Br(),
+    html.Br(),##
 
     html.A(html.Button('Show World'),href='/'), #### this one can be improved
     
