@@ -26,7 +26,62 @@ df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 with open("geojson11.geojson") as f:
     gj = geojson.load(f)
 
+def Continent_comp(df, tabstring,value):
+    #bar plot 1 with renewables values per continent
+    dff = df.copy()
+    dff = dff[(dff['Year'] >= value[0]) & (dff['Year'] <= value[1])]
+    dff = dff[[tabstring, 'continent', 'Year']]
 
+    fig1 = go.Figure(
+        data=[
+            go.Bar(
+                name="Europe",
+                x= dff.Year.unique(),
+                y= dff.loc[dff['continent'] == 'Europe'].groupby('Year')[tabstring].mean(),
+                marker_color="#004687",
+                opacity=0.8,
+            ),
+            go.Bar(
+                name="Asia",
+                x= dff.Year.unique(),
+                y=dff.loc[dff['continent'] == 'Asia'].groupby('Year')[tabstring].mean(),
+                marker_color="#AE8F6F",
+                opacity=0.8,
+            ),
+            go.Bar(
+                name="Oceania",
+                x= dff.Year.unique(),
+                y= dff.loc[dff['continent'] == 'Oceania'].groupby('Year')[tabstring].mean(),
+                marker_color="#FF9912",
+                opacity=0.8,
+            ),
+            go.Bar(
+                name="Africa",
+                x= dff.Year.unique(),
+                y= dff.loc[dff['continent'] == 'Africa'].groupby('Year')[tabstring].mean(),
+                marker_color="#4D4D4D",
+                opacity=0.8,
+            ),
+            go.Bar(
+                name="North America",
+                x= dff.Year.unique(),
+                y= dff.loc[dff['continent'] == 'North America'].groupby('Year')[tabstring].mean(),
+                marker_color="#EE2C2C",
+                opacity=0.8
+            )]
+            )
+    fig1.update_layout({
+            "plot_bgcolor": "rgba(0, 0, 0, 0)",
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            },
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-0.2,
+                xanchor="left",
+                x=0.3
+    ))
+    return fig1
 # ---------------------------------------------------------------------------------
 layout = html.Div([
     html.Div(children = [
@@ -336,6 +391,6 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity, sort_bu
         
         return header, button_text , button2_text, fig, bar_hor, figure1 
     else:
-        # fig2 =  fig2
+        fig2 =  Continent_comp(df, tab_string,value_bar)
 
         return header, button_text , button2_text, fig, bar_hor, fig2 

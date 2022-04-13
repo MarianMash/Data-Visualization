@@ -1,3 +1,4 @@
+from pickle import LIST
 from pydoc import classname
 from re import A, template
 from turtle import width
@@ -59,7 +60,9 @@ def bar_plot_cs(df, value, location,tab_string):
     )
     return fig_cs
 
-def pie_func(df,value_pie,country_dropdown,list_1):
+def pie_func(df,value_pie,country_dropdown,list_1 = None):
+
+
     labels_dict ={list_1[0]: 'Oil',
         list_1[1]: 'Gas',
         list_1[2]: 'Coal', 
