@@ -78,12 +78,10 @@ layout = html.Div([
         dcc.Graph(id='electricity_bar', style={'width': '30%', 'float': 'right', 'display': 'inline-block'}),
     ], className = 'row'),
     html.Br(),
-    
-    html.Br()
 
 ])
 
-# ---------------------------------------- CALLBACKS --------------------------------------
+# ---------------------------------------- CALLBACKS --------------------------------------##
 
 @callback([
     Output(component_id='intervalComponentComparison', component_property='disabled'),
@@ -149,18 +147,14 @@ def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, b
     # select year  
     if btnSelected is None: 
         btnSelected = 0
-    if btnSelected % 2 == 0: 
-        dff = file[file['Year'] == slider_value]
-    else:
-        dff = file[file['Year'] == slider_value]
-        #dff = file[(file['Country'].isin([drop1_value])) & (file['Year'] == slider_value)]
     
+    # select underlying data based on the value of button 'show selected only'
+    dff = file.loc[file['Year'] == slider_value]
+    if btnSelected % 2 == 1: 
+        dff = file.loc[(file['Country'].isin(drop1_value)) & (file['Year'] == slider_value)]
+        
 
-    # save values of the selected country
-    selectedCountryX = float(dff[dff['Country'] == drop1_value[0]]['Total energy production (Mtoe)'])
-    selectedCountryY = float(dff[dff['Country'] == drop1_value[0]]['Total energy consumption (Mtoe)'])
-
-    # select marker size column based on imputs from the buttons
+    # select marker size column based on inputs from the buttons
     timestampsDict = {
         'default_size': btnDefault, 
         'gdp_md_est': btnGDP, 
@@ -169,8 +163,11 @@ def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, b
     }
     sizePicker = max(timestampsDict.items(), key=operator.itemgetter(1))[0]
 
+    # create custom scatter color for selected countries 
     for dropSelection in drop1_value:
-        i = dff[dff['Country']==dropSelection].index.values[0]
+        if dff.shape[0] == 0:
+            break
+        i = dff.loc[dff['Country']==dropSelection].index.values[0]
         dff.loc[i, 'scatterColor'] = dropSelection
 
     fig = px.scatter(data_frame=dff, 
@@ -192,8 +189,8 @@ def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, b
     barNames = ['Production', 'Consumption']
     dataHolder = []
     for dropSelection in drop1_value:
-        selectedCountryX = float(dff[dff['Country'] == dropSelection]['Total energy production (Mtoe)'])
-        selectedCountryY = float(dff[dff['Country'] == dropSelection]['Total energy consumption (Mtoe)'])
+        selectedCountryX = float(dff.loc[dff['Country'] == dropSelection]['Total energy production (Mtoe)'])
+        selectedCountryY = float(dff.loc[dff['Country'] == dropSelection]['Total energy consumption (Mtoe)'])
         
         barValues = []
         if xaxis_type == 'Linear':
@@ -215,8 +212,8 @@ def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, b
         )
 
     figBar = go.Figure(data=dataHolder)
-    #figBar.update(figBar, showlegend="false")
+
     for trace in figBar['data']:
         trace['showlegend'] = False
-
+    
     return fig, figBar
