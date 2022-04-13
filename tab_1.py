@@ -1,15 +1,19 @@
+from pydoc import classname
+from re import A, template
+from turtle import width
 from dash import dcc, html, Input, Output, callback, callback_context
 import pandas as pd
 import plotly.express as px  # (version 4.7.0 or higher)
 import plotly
 import plotly.graph_objects as go
+import dash_bootstrap_components as dbc
 
 
 #pip install geojson
 import geojson
 
 
-# ---------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------##
 # Data import and cleaning
 
 df = pd.read_csv('ActualDataset.csv')
@@ -22,6 +26,7 @@ df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 tab_string = 'Total energy production (Mtoe)'
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
+last = 'Total energy consumption (Mtoe)'
 
 with open("geojson11.geojson") as f:
     gj = geojson.load(f)
@@ -32,6 +37,50 @@ consumption = ['Oil products domestic consumption (Mt)','Natural gas domestic co
 
 production = ['Refined oil products production (Mt)','Natural gas production (bcm)',
                 'Coal and lignite production (Mt)','Electricity production (TWh)']
+            
+##### Some Functions #####
+def bar_plot_cs(df, value, location,tab_string):
+    df_cs = df.copy()
+    df_cs = df_cs[(df_cs['Year'] >= value[0]) & (df_cs['Year'] <= value[1])]
+    df_cs = df_cs[df_cs['Country'] == location]
+    df_cs = df_cs[[tab_string,'Year']]
+
+    fig_cs = go.Figure(
+            data=[
+                go.Bar(
+                    name= location,
+                    x= df_cs.Year.unique(),
+                    y= df_cs[tab_string],
+                    marker_color="#004687",
+                    opacity=0.8,
+                    hovertext= location
+                ),
+            ]
+    )
+    return fig_cs
+
+def pie_func(df,value_pie,country_dropdown,list_1):
+    labels_dict ={list_1[0]: 'Oil',
+        list_1[1]: 'Gas',
+        list_1[2]: 'Coal', 
+        list_1[3]: 'Electricity'}
+
+
+    dff2 = df.copy()
+    dff2 = dff2[dff2['Year'] == value_pie]
+    dff2 = dff2[dff2['Country'] == country_dropdown]
+    dff2 = dff2[list_1]
+
+    piechart=px.pie(
+                data_frame=dff2,
+                values = dff2.values.tolist()[0],
+                names= list(labels_dict.values()),
+                hole=.8,
+            color_discrete_sequence = px.colors.qualitative.Antique)
+    piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            },margin={'r':10,'t':0,'l':0,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.40))
+    return piechart
 
 # Accesstoken for Mapbox-API
 plotly.express.set_mapbox_access_token("pk.eyJ1IjoibWFzaGF5ZWtoaTE4IiwiYSI6ImNsMXBkaXpveTE4eGIzY28yY2h2bDR0aWQifQ.4BeYsKCaxz8Mzg1A1C0LrA")
@@ -43,100 +92,206 @@ for country in df['Country'].unique():
     countries.append({'label':str(country),'value':country})
 
 
+
 # ---------------------------------------------------------------------------------
 # Layout of this tab
 
 layout = html.Div([
 
-    html.Div(children = [
-        html.Div([
-            html.Button("Production",id='Production'),
-            html.Button("Consumption",id='Consumption'),
-            ])
-            ]),
-    html.Div(html.H3(tab_string),
-        id='ticker_header'
-    )
-    ,
-    html.Div(children = [
-        html.Div([
-            html.Button(id='buttonPlay', children='Play'),
-            html.Button(id='buttonPause', children='Pause'),
-            html.Button(id='buttonReset', children='Reset'),
-            dcc.Interval(id='interval-component', interval=1500, n_intervals=0)], style={'width': '15%', 'display': 'inline-block'}),
-        html.Div([
-            dcc.Slider(id='my_slider', min = 1990, max = 2020, step = 1, value=1990, 
-                    marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
-                    tooltip={"placement": "bottom", "always_visible": True},
-                    #updatemode='drag'
-                    )], style={'width': '75%', 'display': 'inline-block'}),
-        html.Br(),
-        html.Br(),
-        html.Button('Largest', id='sort_button', n_clicks=0),
-        html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"})],
-    ),
-    html.Div(children=[
-                    dcc.Graph(id="bar_hor_1", style={'display': 'inline-block','width': '34%'}),
-                    dcc.Graph(id="world", style={'display': 'inline-block','width': '64%'}),
-                    ]),
+    # html.Div(children = [
+    #                     html.Div([
+    #                             html.Button("Production",id='Production', className="m-1 btn btn-success"),
+    #                             html.Button("Consumption",id='Consumption', className="m-1 btn btn-info"),
+    #                             ])
+    #                     ]),
+    # html.Div(html.H3(tab_string),id='ticker_header'),
+    # html.Div(children = [
+    #             html.Div([
+    #                 html.Button(id='buttonPlay', children='Play', className="m-1 btn btn-success"),
+    #                 html.Button(id='buttonPause', children='Pause', className="m-1 btn btn-warning"),
+    #                 html.Button(id='buttonReset', children='Reset', className="m-1 btn btn-primary"),
+    #                 dcc.Interval(id='interval-component', interval=1500, n_intervals=0)], className="m-3"),
+    #             html.Div([
+    #                 dcc.Slider(id='my_slider', min = 1990, max = 2020, step = 1, value=1990, 
+    #                         marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
+    #                         tooltip={"placement": "bottom", "always_visible": True},
+    #                         #updatemode='drag'
+    #                         )], style={'width': '75%', 'display': 'inline-block'}),
+    #             html.Br(),
+    #             html.Br(),
+    #             html.Button('Largest', id='sort_button', n_clicks=0, className="m-3 btn btn-light"),
+    #             html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")],
+    #         ),
+    # html.Div(children=[
+    #                 dcc.Graph(id="bar_hor_1", style={'display': 'inline-block','width': '34%'}),
+    #                 dcc.Graph(id="world", style={'display': 'inline-block','width': '64%'}),
+    #                 ]),
     html.Br(),
-    html.Br(),
+
+    html.Div(
+            [   
+                #Buttons Production-Consumption
+                dbc.Row(
+                    [
+                        html.Div(children = [
+                        html.Div([
+                                html.Button("Production",id='Production', className="m-1 btn btn-success"),
+                                html.Button("Consumption",id='Consumption', className="m-1 btn btn-info"),
+                                ])
+                        ])
+                    ]
+                ),
+                #Title 
+                dbc.Row(
+                    [
+                        html.Div(html.H3(tab_string),id='ticker_header', className="m-3 text-lg-center text-light")
+                    ]
+                ),
+                #Buttons and slider
+                dbc.Row(
+                    [
+                        dbc.Col([
+                                
+                                html.Button(id='buttonPlay', children='Play', className="m-1 btn btn-success"),
+                                html.Button(id='buttonPause', children='Pause', className="m-1 btn btn-warning"),
+                                html.Button(id='buttonReset', children='Reset', className="m-1 btn btn-primary"),
+                                ], width=3),
+                        dbc.Col([
+                                dcc.Interval(id='interval-component', interval=1500, n_intervals=0),
+                                dcc.Slider(id='my_slider', min = 1990, max = 2020, step = 1, value=1990, 
+                                            marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
+                                            tooltip={"placement": "bottom", "always_visible": True},
+                                            #updatemode='drag'
+                                            )
+                        ],width=9)
+                    ]
+                ),
+                #two buttons related to bar and map
+                dbc.Row([dbc.Col([
+                            html.Button('Largest', id='sort_button', n_clicks=0, className="m-3 btn btn-light"),
+                        ],width=2),
+                        dbc.Col([],width=8),
+                        dbc.Col([
+                            html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")
+                        ],width=2)
+                ]),
+                #Bar chart and map graph
+                dbc.Row(
+                    [
+                        dbc.Col(dbc.Card([html.Br(className="mb-6"),
+                                        dcc.Graph(id="bar_hor_1"),
+                                        html.Br(className="mb-6")],
+                                        color="secondary"),width=4),
+                        dbc.Col(dbc.Card([html.Br(className="mb-6"),
+                                        dcc.Graph(id="world"),
+                                        html.Br(className="mb-6")],
+                                        color="secondary", inverse=True),width=8),
+                    ]
+                ),
+            ]
+        ),
 
     ########################### CONSUMPTION ######################x
    # html.H3('Total energy consumption (Mtoe)'),
     html.Br(),
-    html.Div([dcc.Slider(id='simple_slider',
-                min = 1990, 
-                max = 2020, 
-                step = 1, 
-                value=1990,  
-                marks = None,
-                tooltip={"placement": "bottom", "always_visible": True},
-                updatemode='drag',
+    # html.Div([dcc.Slider(id='simple_slider',
+    #             min = 1990, 
+    #             max = 2020, 
+    #             step = 1, 
+    #             value=1990,  
+    #             marks = None,
+    #             tooltip={"placement": "bottom", "always_visible": True},
+    #             updatemode='drag',
                 
-                )],style={'width': '30%',"float":"right"}),
+    #             )],style={'width': '30%',"float":"right"}),
 
-    html.Div(children= [
-        html.Div([dcc.RangeSlider(id="range_slider",
-                    min=1990,
-                    max=2020,
-                    value=[1995, 2015   ],
-                    step = 1,
-                    className="dcc_control",
-                    marks = None,
-                    tooltip={"placement": "bottom", "always_visible": True},
-                    updatemode='drag')],
-                    style={'width': '70%', 'display': 'inline-block'}),
+    # html.Div(children= [
+    #     html.Div([dcc.RangeSlider(id="range_slider",
+    #                 min=1990,
+    #                 max=2020,
+    #                 value=[1995, 2015   ],
+    #                 step = 1,
+    #                 className="dcc_control",
+    #                 marks = None,
+    #                 tooltip={"placement": "bottom", "always_visible": True},
+    #                 updatemode='drag')],
+    #                 style={'width': '70%', 'display': 'inline-block'}),
 
         
-        dcc.Dropdown(
-        options= countries,
-        value='Portugal',
-        id='country_dropdown',
-        style={"width": "30%",'display': 'inline-block', "float": "right"}
-        ),
+    #     dcc.Dropdown(
+    #     options= countries,
+    #     value='Portugal',
+    #     id='country_dropdown',
+    #     style={"width": "30%",'display': 'inline-block', "float": "right"}
+    #     ),
 
-    ]),
+    # ]),
    
     
     html.Br(),
-    html.Br(),
-    html.Div(children= [
-        dcc.Graph(id='bar_chart_2', style={"width": "70%",'display': 'inline-block'}),
-        dcc.Graph(id='circle_graph', style={"width": "30%",'display': 'inline-block'})]),
-    html.Br(),
-    
-    html.Br(),
+    # html.Div(children= [
+    #     dbc.Card(
+    #         dbc.CardBody(
+    #             [
+    #                 dcc.Graph(id='bar_chart_2', style={"width": "70%",'display': 'inline-block'}),
+    #                 dcc.Graph(id='circle_graph', style={"width": "30%",'display': 'inline-block'})
+    #             ]
+    #         ),
+    #         className="card text-white bg-secondary",
+    #     )]),
+        # dcc.Graph(id='bar_chart_2', style={"width": "70%",'display': 'inline-block'}),
+        # dcc.Graph(id='circle_graph', style={"width": "30%",'display': 'inline-block'})]),
+
 
     
 
     html.Br(),
+    html.A(html.Button('Show World', className="m-1 btn btn-success"),href='/'),
+    html.Div(
+    [
+
+        dbc.Row(
+            [
+                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per continent"), ## can we have here a html as well? Because then we can make it dynamic
+                                    html.Br(className="mb-6"),
+                                    dcc.RangeSlider(id="range_slider",
+                                                    min=1990,
+                                                    max=2020,
+                                                    value=[1995, 2015   ],
+                                                    step = 1,
+                                                    className="dcc_control",
+                                                    marks = None,
+                                                    tooltip={"placement": "bottom", "always_visible": True},
+                                                    updatemode='drag'),
+                                    html.Br(className="mb-6"),
+                                dcc.Graph(id='bar_chart_2'),
+                                html.Br(className="mb-6")],
+                                color="light"),width=8),
+                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per Country a and energy type"),
+                                    html.Br(className="mb-6"),
+                                    dbc.Row([dcc.Slider(id='simple_slider',
+                                                        min = 1990, 
+                                                        max = 2020, 
+                                                        step = 1, 
+                                                        value=1990,  
+                                                        marks = None,
+                                                        tooltip={"placement": "bottom", "always_visible": True},
+                                                        updatemode='drag'),
+                                            dcc.Dropdown(options= countries,
+                                                        value='Portugal',
+                                                        id='country_dropdown')
+                                            ]),
+                                    html.Br(className="mb-6"),
+                                dcc.Graph(id='circle_graph')],
+                                color="secondary", inverse=True),width=4),
+            ]
+        ),
+    ]
+)
 
     
-
     
-    
-])
+], className="m-3")
 
 # ------------------------------------------------------------------------------
 # Callbacks of this tab
@@ -212,14 +367,16 @@ def on_click(n_intervals, buttonReset, dragValue):
     [Input(component_id = 'my_slider', component_property = 'value'),
     Input(component_id = 'Normalized', component_property = 'n_clicks'),
     Input(component_id = 'sort_button', component_property = 'n_clicks'),
-    Input(component_id = 'Production', component_property = 'n_clicks'),
-    Input(component_id = 'Consumption', component_property = 'n_clicks'),
+    Input(component_id = 'Production', component_property = 'n_clicks_timestamp'),
+    Input(component_id = 'Consumption', component_property = 'n_clicks_timestamp'),
     Input(component_id ='country_dropdown', component_property = 'value'),
     Input(component_id ='simple_slider', component_property = 'value'),
-    Input(component_id = 'range_slider', component_property = 'value')
+    Input(component_id = 'range_slider', component_property = 'value'),
+    Input(component_id = 'ticker_header', component_property = 'children'),
+    Input(component_id ='world',component_property = 'clickData'),
     ])
 
-def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Button, Con_Button,country_dropdown, value_pie, value_bar):
+def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_Button, Con_Time_Button, country_dropdown, value_pie, value_bar,header_value,c_selection):
     dff = df.copy()
     dff = dff[dff["Year"]==selected_year]
     
@@ -228,23 +385,31 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Button, 
 
     # Normalize Button
         # Production or Consumption
-    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+    
+    # initialize Timestamps if they're not clicked yet
+
+    if Con_Time_Button is None:
+        Con_Time_Button = 0
+    if Prod_Time_Button is None:
+        Prod_Time_Button = 0
+
     list_1 = production
     tab_string = 'Total energy production (Mtoe)'
 
     header = [html.H3(tab_string)]
-    if 'Production' in changed_id:
+    
+### determine which button was clicked last by comparing timestamps
+    if Prod_Time_Button<Con_Time_Button:
+        list_1 = consumption
+        tab_string = 'Total energy consumption (Mtoe)'
+        header = [html.H3(tab_string)]
+
+    if Prod_Time_Button > Con_Time_Button:
         list_1 = production 
         tab_string = 'Total energy production (Mtoe)'
     
         header = [html.H3(tab_string)]
         
-    elif 'Consumption' in changed_id:
-        list_1 = consumption
-        tab_string = 'Total energy consumption (Mtoe)'
-        header = [html.H3(tab_string)]
-    else: 
-        next
 
 
 ### Absolute or relative
@@ -289,8 +454,11 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Button, 
     )
 
     # Define layout specificities
-    fig.update_layout(dragmode=False,
-    margin={'r':0,'t':0,'l':0,'b':0},
+    fig.update_layout({
+            "plot_bgcolor": "rgba(0, 0, 0, 0)",
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            },dragmode=False,
+    margin={'r':0,'t':0,'l':15,'b':0},
         coloraxis_colorbar={
             'title':'Mtoe',
             'tickvals':(0,round(dff[the_column].max())),
@@ -302,7 +470,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Button, 
                             colorbar_orientation = "v",
                             colorbar_ticks = "inside")
 
-    fig.update(layout_showlegend=False)
+    #fig.update(layout_showlegend=False)
 
 
 
@@ -331,9 +499,9 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Button, 
     bar_hor.update_xaxes(visible=False, showticklabels=False)
     bar_hor.update(layout_coloraxis_showscale=False)
 
-
+    
      ########################################################################################################################################
-    #PieChart
+    #PieChart##
  
   
     labels_dict ={list_1[0]: 'Oil',
@@ -415,8 +583,21 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Button, 
                 xanchor="left",
                 x=0.3
 ))
+    if c_selection is not None:
+        
+        location = c_selection['points'][0]['location']
+        cs_name = dff[dff.iso_a3 == location]["Country"].to_list()[0]
 
-    return fig, bar_hor, button_text , button2_text, piechart, fig2 , header
+        figure1 = bar_plot_cs(df,value_bar,cs_name,tab_string)
+        piechart = pie_func(df,value_pie,cs_name,list_1)
+
+        
+        return fig, bar_hor, button_text , button2_text, piechart, figure1 , header
+    else:
+        # fig2 =  fig2
+        piechart = pie_func(df,value_pie,country_dropdown,list_1)
+
+        return fig, bar_hor, button_text , button2_text, piechart, fig2 , header
 
 
 #circle graph of total consumption of all features by country
