@@ -1,4 +1,6 @@
-from re import A
+from pydoc import classname
+from re import A, template
+from turtle import width
 from dash import dcc, html, Input, Output, callback, callback_context
 import pandas as pd
 import plotly.express as px  # (version 4.7.0 or higher)
@@ -89,19 +91,6 @@ countries = []
 for country in df['Country'].unique():
     countries.append({'label':str(country),'value':country})
 
-# To be removed 
-card_content = [
-    dbc.CardHeader("Card header"),
-    dbc.CardBody(
-        [
-            html.H5("Card title", className="card-title"),
-            html.P(
-                "This is some card content that we'll reuse",
-                className="card-text",
-            ),
-        ]
-    ),
-]
 
 
 # ---------------------------------------------------------------------------------
@@ -138,7 +127,6 @@ layout = html.Div([
     #                 dcc.Graph(id="world", style={'display': 'inline-block','width': '64%'}),
     #                 ]),
     html.Br(),
-    html.Br(),
 
     html.Div(
             [   
@@ -156,31 +144,37 @@ layout = html.Div([
                 #Title 
                 dbc.Row(
                     [
-                        html.Div(html.H3(tab_string),id='ticker_header')
+                        html.Div(html.H3(tab_string),id='ticker_header', className="m-3 text-lg-center text-light")
                     ]
                 ),
                 #Buttons and slider
                 dbc.Row(
                     [
-                        html.Div(children = [
-                                    html.Div([
-                                        html.Button(id='buttonPlay', children='Play', className="m-1 btn btn-success"),
-                                        html.Button(id='buttonPause', children='Pause', className="m-1 btn btn-warning"),
-                                        html.Button(id='buttonReset', children='Reset', className="m-1 btn btn-primary"),
-                                        dcc.Interval(id='interval-component', interval=1500, n_intervals=0)], className="m-3"),
-                                    html.Div([
-                                        dcc.Slider(id='my_slider', min = 1990, max = 2020, step = 1, value=1990, 
-                                                marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
-                                                tooltip={"placement": "bottom", "always_visible": True},
-                                                #updatemode='drag'
-                                                )], style={'width': '75%', 'display': 'inline-block'}),
-                                    html.Br(),
-                                    html.Br(),
-                                    html.Button('Largest', id='sort_button', n_clicks=0, className="m-3 btn btn-light"),
-                                    html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")],
-                                ),
+                        dbc.Col([
+                                
+                                html.Button(id='buttonPlay', children='Play', className="m-1 btn btn-success"),
+                                html.Button(id='buttonPause', children='Pause', className="m-1 btn btn-warning"),
+                                html.Button(id='buttonReset', children='Reset', className="m-1 btn btn-primary"),
+                                ], width=3),
+                        dbc.Col([
+                                dcc.Interval(id='interval-component', interval=1500, n_intervals=0),
+                                dcc.Slider(id='my_slider', min = 1990, max = 2020, step = 1, value=1990, 
+                                            marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
+                                            tooltip={"placement": "bottom", "always_visible": True},
+                                            #updatemode='drag'
+                                            )
+                        ],width=9)
                     ]
                 ),
+                #two buttons related to bar and map
+                dbc.Row([dbc.Col([
+                            html.Button('Largest', id='sort_button', n_clicks=0, className="m-3 btn btn-light"),
+                        ],width=2),
+                        dbc.Col([],width=8),
+                        dbc.Col([
+                            html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")
+                        ],width=2)
+                ]),
                 #Bar chart and map graph
                 dbc.Row(
                     [
@@ -235,7 +229,6 @@ layout = html.Div([
    
     
     html.Br(),
-    html.Br(),
     # html.Div(children= [
     #     dbc.Card(
     #         dbc.CardBody(
@@ -248,14 +241,12 @@ layout = html.Div([
     #     )]),
         # dcc.Graph(id='bar_chart_2', style={"width": "70%",'display': 'inline-block'}),
         # dcc.Graph(id='circle_graph', style={"width": "30%",'display': 'inline-block'})]),
-    html.Br(),
-    
-    html.Br(),
+
 
     
 
     html.Br(),
-    html.A(html.Button('Show World'),href='/'),
+    html.A(html.Button('Show World', className="m-1 btn btn-success"),href='/'),
     html.Div(
     [
 
@@ -291,8 +282,7 @@ layout = html.Div([
                                                         id='country_dropdown')
                                             ]),
                                     html.Br(className="mb-6"),
-                                dcc.Graph(id='circle_graph'),
-                                html.Br(className="mb-6")],
+                                dcc.Graph(id='circle_graph')],
                                 color="secondary", inverse=True),width=4),
             ]
         ),
@@ -464,8 +454,11 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
     )
 
     # Define layout specificities
-    fig.update_layout(dragmode=False,
-    margin={'r':0,'t':0,'l':0,'b':0},
+    fig.update_layout({
+            "plot_bgcolor": "rgba(0, 0, 0, 0)",
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            },dragmode=False,
+    margin={'r':0,'t':0,'l':15,'b':0},
         coloraxis_colorbar={
             'title':'Mtoe',
             'tickvals':(0,round(dff[the_column].max())),
@@ -477,7 +470,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
                             colorbar_orientation = "v",
                             colorbar_ticks = "inside")
 
-    fig.update(layout_showlegend=False)
+    #fig.update(layout_showlegend=False)
 
 
 
