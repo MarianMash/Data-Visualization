@@ -13,7 +13,7 @@ import dash_bootstrap_components as dbc
 import geojson
 
 
-# ---------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------##
 # Data import and cleaning
 
 df = pd.read_csv('ActualDataset.csv')
