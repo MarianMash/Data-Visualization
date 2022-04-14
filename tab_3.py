@@ -61,7 +61,7 @@ layout = html.Div([
                     html.Button(id='buttonGDP', children='GDP', n_clicks_timestamp=0, className="m-1 btn btn-light"),
                     html.Button(id='buttonPopulation', children='Population', n_clicks_timestamp=0, className="m-1 btn btn-light"),
                     html.Button(id='buttonArea', children='Area', n_clicks_timestamp=0, className="m-1 btn btn-light")
-            ], width=5),
+            ], width=6),
             dbc.Col([
                     dcc.RadioItems(
                     ['Linear X axis', 'Log X axis'],
@@ -70,6 +70,7 @@ layout = html.Div([
                     inline=True, 
                     style = {'display': 'inline-block', "margin-left": "40px", "verticalAlign": "middle"}
                     ),
+                    
                 
                     dcc.RadioItems(
                         ['Linear Y axis', 'Log Y axis'],
@@ -78,7 +79,7 @@ layout = html.Div([
                         inline=True,
                         style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}
                     )
-            ],width=4)
+            ],width=5, className="m-3")
         ]
     ),
 
@@ -151,7 +152,7 @@ layout = html.Div([
     # ], className = 'row'),
     # html.Br(),
 
-])
+], className="m-3")
 
 # ---------------------------------------- CALLBACKS --------------------------------------##
 
