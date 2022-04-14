@@ -155,7 +155,7 @@ layout = html.Div([
                     [
                         html.Div(children = [
                         html.Div([
-                                html.Button("Production",id='Production', className="m-1 btn btn-success"),
+                                html.Button("Production",id='Production', className="m-1 btn btn-info"),
                                 html.Button("Consumption",id='Consumption', className="m-1 btn btn-info"),
                                 ])
                         ])
@@ -173,8 +173,8 @@ layout = html.Div([
                         dbc.Col([
                                 
                                 html.Button(id='buttonPlay', children='Play', className="m-1 btn btn-success"),
-                                html.Button(id='buttonPause', children='Pause', className="m-1 btn btn-warning"),
-                                html.Button(id='buttonReset', children='Reset', className="m-1 btn btn-primary"),
+                                html.Button(id='buttonPause', children='Pause', className="m-1 btn btn-success"),
+                                html.Button(id='buttonReset', children='Reset', className="m-1 btn btn-success"),
                                 ], width=3),
                         dbc.Col([
                                 dcc.Interval(id='interval-component', interval=1500, n_intervals=0),
@@ -266,7 +266,7 @@ layout = html.Div([
     
 
     html.Br(),
-    html.A(html.Button('Show World', className="m-1 btn btn-success"),href='/'),
+    html.A(html.Button('Show World', className="m-1 btn btn-light"),href='/'),
     html.Div(
     [
 
@@ -287,7 +287,7 @@ layout = html.Div([
                                 dcc.Graph(id='bar_chart_2'),
                                 html.Br(className="mb-6")],
                                 color="light"),width=8),
-                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per Country a and energy type"),
+                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per Country and energy type"),
                                     html.Br(className="mb-6"),
                                     dbc.Row([dcc.Slider(id='simple_slider',
                                                         min = 1990, 
