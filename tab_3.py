@@ -4,6 +4,7 @@ import plotly.express as px  # (version 4.7.0 or higher)
 import plotly.graph_objects as go
 from math import log
 import operator
+import dash_bootstrap_components as dbc
 
 from dash import Dash, dcc, html, Input, Output, callback
 
@@ -27,57 +28,128 @@ options1 = [{'label': 'Portugal', 'value': 'Portugal'},
 
 layout = html.Div([
     html.Br(),
-    html.Br(),
-    html.Div([
-        html.Div([
-            dcc.Interval(id='intervalComponentComparison', interval=1500, n_intervals=0),
-            html.Button(id='buttonPlayComparison', children='Play', style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
-            html.Button(id='buttonPauseComparison', children='Pause', style = {'display': 'inline-block', "margin-left": "10px", "verticalAlign": "middle"}),
-            html.Button(id='buttonResetComparison', children='Reset', style = {'display': 'inline-block', "margin-left": "10px", "verticalAlign": "middle"}),
-            ], style = {'width': '20%',  'float': 'left','display': 'inline-block'}),
-        html.Div([
-            dcc.Slider(id='sliderComparison', min = 1990, max = 2020, step = 1, value=1990, 
+    #Buttons - slider - dropdown
+    dbc.Row(
+        [
+            dbc.Col([
+                    
+                    html.Button(id='buttonPlayComparison', children='Play', className="m-1 btn btn-success"),
+                    html.Button(id='buttonPauseComparison', children='Pause', className="m-1 btn btn-success"),
+                    html.Button(id='buttonResetComparison', children='Reset', className="m-1 btn btn-success")
+            ], width=3),
+            dbc.Col([
+                    dcc.Interval(id='intervalComponentComparison', interval=1500, n_intervals=0),
+                    dcc.Slider(id='sliderComparison', min = 1990, max = 2020, step = 1, value=1990, 
                     marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
-                    tooltip={"placement": "bottom", "always_visible": True}),
-        ], style = {'width': '50%',  'float': 'left','display': 'inline-block'}),
-        html.Div([
-            dcc.Dropdown(
-                id='drop1',
-                options=countryListComparison,
-                value=['Portugal', 'Spain'], 
-                multi = True),
-            html.Br(),
-        ], style={'width': 'auto', 'float': 'middle', 'display': 'inline-block', "margin-left": "10px", "margin-right": "20px"})
-    ], style = {'width': 'auto', 'height': '50px'}),
-    html.Br(),
-    html.Div([
-        html.Button(id='buttonShowSelectedOnly', children='Show Selected Only', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "margin-right": "20px", "verticalAlign": "middle"}),
-        html.Button(id='buttonDefault', children='Default', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
-        html.Button(id='buttonGDP', children='GDP', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
-        html.Button(id='buttonPopulation', children='Population', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
-        html.Button(id='buttonArea', children='Area', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
-        dcc.RadioItems(
-            ['Linear X axis', 'Log X axis'],
-            'Linear X axis',
-            id='xaxis_type',
-            inline=True, 
-            style = {'display': 'inline-block', "margin-left": "40px", "verticalAlign": "middle"}
-        ),
+                    tooltip={"placement": "bottom", "always_visible": True})
+            ],width=6),
+            dbc.Col([
+                    dcc.Dropdown(
+                    id='drop1',
+                    options=countryListComparison,
+                    value=['Portugal', 'Spain'], 
+                    multi = True)
+            ],width=3)
+        ]
+    ),
+
+    dbc.Row(
+        [
+            dbc.Col([
+                    html.Button(id='buttonShowSelectedOnly', children='Show Selected Only', n_clicks_timestamp=0, className="m-3 btn btn-light"),
+                    html.Button(id='buttonDefault', children='Default', n_clicks_timestamp=0, className="m-1 btn btn-light"),
+                    html.Button(id='buttonGDP', children='GDP', n_clicks_timestamp=0, className="m-1 btn btn-light"),
+                    html.Button(id='buttonPopulation', children='Population', n_clicks_timestamp=0, className="m-1 btn btn-light"),
+                    html.Button(id='buttonArea', children='Area', n_clicks_timestamp=0, className="m-1 btn btn-light")
+            ], width=5),
+            dbc.Col([
+                    dcc.RadioItems(
+                    ['Linear X axis', 'Log X axis'],
+                    'Linear X axis',
+                    id='xaxis_type',
+                    inline=True, 
+                    style = {'display': 'inline-block', "margin-left": "40px", "verticalAlign": "middle"}
+                    ),
+                
+                    dcc.RadioItems(
+                        ['Linear Y axis', 'Log Y axis'],
+                        'Linear Y axis',
+                        id='yaxis_type',
+                        inline=True,
+                        style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}
+                    )
+            ],width=4)
+        ]
+    ),
+
+    #Scatterplot and bar chart
+    dbc.Row(
+        [
+            dbc.Col(dbc.Card([dbc.CardHeader("Scatterplot of Total Energy Production and Consumption of countries "),
+                            html.Br(className="mb-6"),
+                            dcc.Graph(id='electricity_graph'),
+                            html.Br(className="mb-6")],
+                            color="secondary"),width=8),
+            dbc.Col(dbc.Card([dbc.CardHeader("Production and Consumption for selected countries"),
+                            html.Br(className="mb-6"),
+                            dcc.Graph(id='electricity_bar'),
+                            html.Br(className="mb-6")],
+                            color="secondary", inverse=True),width=4),
+        ]
+    ),
+
+    ###
+    # html.Br(),
+    # html.Div([
+    #     html.Div([
+    #         dcc.Interval(id='intervalComponentComparison', interval=1500, n_intervals=0),
+    #         html.Button(id='buttonPlayComparison', children='Play', style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
+    #         html.Button(id='buttonPauseComparison', children='Pause', style = {'display': 'inline-block', "margin-left": "10px", "verticalAlign": "middle"}),
+    #         html.Button(id='buttonResetComparison', children='Reset', style = {'display': 'inline-block', "margin-left": "10px", "verticalAlign": "middle"}),
+    #         ], style = {'width': '20%',  'float': 'left','display': 'inline-block'}),
+    #     html.Div([
+    #         dcc.Slider(id='sliderComparison', min = 1990, max = 2020, step = 1, value=1990, 
+    #                 marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
+    #                 tooltip={"placement": "bottom", "always_visible": True}),
+    #     ], style = {'width': '50%',  'float': 'left','display': 'inline-block'}),
+    #     html.Div([
+    #         dcc.Dropdown(
+    #             id='drop1',
+    #             options=countryListComparison,
+    #             value=['Portugal', 'Spain'], 
+    #             multi = True),
+    #         html.Br(),
+    #     ], style={'width': 'auto', 'float': 'middle', 'display': 'inline-block', "margin-left": "10px", "margin-right": "20px"})
+    # ], style = {'width': 'auto', 'height': '50px'}),
+    # html.Br(),
+    # html.Div([
+    #     html.Button(id='buttonShowSelectedOnly', children='Show Selected Only', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "margin-right": "20px", "verticalAlign": "middle"}),
+    #     html.Button(id='buttonDefault', children='Default', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
+    #     html.Button(id='buttonGDP', children='GDP', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
+    #     html.Button(id='buttonPopulation', children='Population', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
+    #     html.Button(id='buttonArea', children='Area', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
+    #     dcc.RadioItems(
+    #         ['Linear X axis', 'Log X axis'],
+    #         'Linear X axis',
+    #         id='xaxis_type',
+    #         inline=True, 
+    #         style = {'display': 'inline-block', "margin-left": "40px", "verticalAlign": "middle"}
+    #     ),
     
-        dcc.RadioItems(
-            ['Linear Y axis', 'Log Y axis'],
-            'Linear Y axis',
-            id='yaxis_type',
-            inline=True,
-            style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}
-        ),
-    ]),
-    html.Br(),
-    html.Div([
-        dcc.Graph(id='electricity_graph', style={'width': '70%', 'display': 'inline-block'}),
-        dcc.Graph(id='electricity_bar', style={'width': '30%', 'float': 'right', 'display': 'inline-block'}),
-    ], className = 'row'),
-    html.Br(),
+    #     dcc.RadioItems(
+    #         ['Linear Y axis', 'Log Y axis'],
+    #         'Linear Y axis',
+    #         id='yaxis_type',
+    #         inline=True,
+    #         style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}
+    #     ),
+    # ]),
+    # html.Br(),
+    # html.Div([
+    #     dcc.Graph(id='electricity_graph', style={'width': '70%', 'display': 'inline-block'}),
+    #     dcc.Graph(id='electricity_bar', style={'width': '30%', 'float': 'right', 'display': 'inline-block'}),
+    # ], className = 'row'),
+    # html.Br(),
 
 ])
 
