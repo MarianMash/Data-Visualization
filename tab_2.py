@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px  # (version 4.7.0 or higher)
 import plotly
 import plotly.graph_objects as go
+import dash_bootstrap_components as dbc
 
 from tab_1 import bar_plot_cs
 
@@ -34,55 +35,184 @@ with open("geojson11.geojson") as f:
 # Layout of this tab
 
 layout = html.Div([
-    html.Div(children = [
-        html.Div([
-            html.Button("Production",id='Prod_1'),
-            html.Button("Consumption",id='Cons_1'),
-            ])
-            ]),
-    html.Div(html.H3(tab_string),
-        id='Header_elec'
-    ),
-    html.Div(children = [
-        html.Div([
-            html.Button(id='PlayButton', children='Play'),
-            html.Button(id='PauseButton', children='Pause'),
-            html.Button(id='ResetButton', children='Reset'),
-            dcc.Interval(id='IntervalComponent', interval=1500, n_intervals=0)], style={'width': '15%', 'display': 'inline-block'}),
-        html.Div([
-            dcc.Slider(id='Slider', min = 1990, max = 2020, step = 1, value=1990, 
-                    marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
-                    tooltip={"placement": "bottom", "always_visible": True},
-                    #updatemode='drag'
-                    )], style={'width': '75%', 'display': 'inline-block'}),
-        html.Br(),
-        html.Br(),
-        html.Button('Largest', id='Button_for_Sorting', n_clicks=0),
-        html.Button('Related to Population', id='Button_for_Normalize', n_clicks=0,style={"float":"right"})],
-    ),
-    html.Div(children=[
-                        dcc.Graph(id="bar_plot", style={'display': 'inline-block','width': '34%'}),
-                        dcc.Graph(id="world_plot", style={'display': 'inline-block','width': '64%'}),
-                        ]),
-    html.Br(),
+
     html.Br(),
 
-    html.A(html.Button('Show World'),href='/'), #### this one can be improved
+    html.Div(
+            [   
+                #Buttons Production-Consumption
+                dbc.Row(
+                    [
+                        html.Div(children = [
+                        html.Div([
+                                html.Button("Production",id='Prod_1', className="m-1 btn btn-info"),
+                                html.Button("Consumption",id='Cons_1', className="m-1 btn btn-info"),
+                                ])
+                        ])
+                    ]
+                ),
+                #Title 
+                dbc.Row(
+                    [
+                        html.Div(html.H3(tab_string),id='Header_elec', className="m-3 text-lg-center text-light"),
+                        html.Div(html.P("Some text explaining what Total electricity is. Maybe it should be a description that changes at the click of the buttons Production and Consumption"), className="m-3 text-lg-center text-light")
+                    ]
+                ),
+                #Buttons and slider
+                dbc.Row(
+                    [
+                        dbc.Col([
+                                
+                                html.Button(id='PlayButton', children='Play', className="m-1 btn btn-success"),
+                                html.Button(id='PauseButton', children='Pause', className="m-1 btn btn-success"),
+                                html.Button(id='ResetButton', children='Reset', className="m-1 btn btn-success"),
+                                ], width=3),
+                        dbc.Col([
+                                dcc.Interval(id='IntervalComponent', interval=1500, n_intervals=0),
+                                dcc.Slider(id='Slider', min = 1990, max = 2020, step = 1, value=1990, 
+                                            marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
+                                            tooltip={"placement": "bottom", "always_visible": True},
+                                            #updatemode='drag'
+                                            )
+                        ],width=9)
+                    ]
+                ),
+                #two buttons related to bar and map
+                dbc.Row([dbc.Col([
+                            html.Button('Largest', id='Button_for_Sorting', n_clicks=0, className="m-3 btn btn-light"),
+                        ],width=2),
+                        dbc.Col([],width=8),
+                        dbc.Col([
+                            html.Button('Related to Population', id='Button_for_Normalize', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")
+                        ],width=2)
+                ]),
+                #Bar chart and map graph
+                dbc.Row(
+                    [
+                        dbc.Col(dbc.Card([dbc.CardHeader("Top 10 countries"),
+                                        html.Br(className="mb-6"),
+                                        dcc.Graph(id="bar_plot"),
+                                        html.Br(className="mb-6")],
+                                        color="secondary"),width=4),
+                        dbc.Col(dbc.Card([dbc.CardHeader("World map"),
+                                        html.Br(className="mb-6"),
+                                        dcc.Graph(id="world_plot"),
+                                        html.Br(className="mb-6")],
+                                        color="secondary", inverse=True),width=8),
+                    ]
+                ),
+            ]
+        ),
+
+    html.Br(),
+    html.A(html.Button('Show World', className="m-1 btn btn-light"),href='/'),
+    html.Div(
+            [
+
+                dbc.Row(
+                    [
+                        dbc.Col(dbc.Card([dbc.CardHeader("Total Electricity Production per continent"), ## can we have here a html as well? Because then we can make it dynamic
+                                            html.Br(className="mb-6"),
+                                            dcc.RangeSlider(id="interval_slider",
+                                                            min=1990,
+                                                            max=2020,
+                                                            value=[1995, 2015   ],
+                                                            step = 1,
+                                                            className="dcc_control",
+                                                            marks = None,
+                                                            tooltip={"placement": "bottom", "always_visible": True},
+                                                            updatemode='drag'),
+                                            html.Br(className="mb-6"),
+                                        dcc.Graph(id='bar_plot_2_2'),
+                                        html.Br(className="mb-6")],
+                                        color="light"),width=8),
+                        dbc.Col(width=4),
+                    ]
+                ),
+            ]
+        )
+                    
+    ]  
+)
+
+    # html.Br(),
+    # html.A(html.Button('Show World', className="m-1 btn btn-light"),href='/'),
+    # html.Div(
+    # [
+
+    #     dbc.Row(
+    #         [
+    #             dbc.Col(dbc.Card([dbc.CardHeader("Total Electricity Production per continent"), ## can we have here a html as well? Because then we can make it dynamic
+    #                                 html.Br(className="mb-6"),
+    #                                 dcc.RangeSlider(id="interval_slider",
+    #                                                 min=1990,
+    #                                                 max=2020,
+    #                                                 value=[1995, 2015   ],
+    #                                                 step = 1,
+    #                                                 className="dcc_control",
+    #                                                 marks = None,
+    #                                                 tooltip={"placement": "bottom", "always_visible": True},
+    #                                                 updatemode='drag'),
+    #                                 html.Br(className="mb-6"),
+    #                             dcc.Graph(id='bar_chart_2_2'),
+    #                             html.Br(className="mb-6")],
+    #                             color="light"),width=8),
+    #             dbc.Col(width=4),
+    #         ]
+    #     ),
+    # ]
+    # )
+
+# layout = html.Div([
+#     html.Div(children = [
+#         html.Div([
+#             html.Button("Production",id='Prod_1'),
+#             html.Button("Consumption",id='Cons_1'),
+#             ])
+#             ]),
+#     html.Div(html.H3(tab_string),
+#         id='Header_elec'
+#     ),
+#     html.Div(children = [
+#         html.Div([
+#             html.Button(id='PlayButton', children='Play'),
+#             html.Button(id='PauseButton', children='Pause'),
+#             html.Button(id='ResetButton', children='Reset'),
+#             dcc.Interval(id='IntervalComponent', interval=1500, n_intervals=0)], style={'width': '15%', 'display': 'inline-block'}),
+#         html.Div([
+#             dcc.Slider(id='Slider', min = 1990, max = 2020, step = 1, value=1990, 
+#                     marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
+#                     tooltip={"placement": "bottom", "always_visible": True},
+#                     #updatemode='drag'
+#                     )], style={'width': '75%', 'display': 'inline-block'}),
+#         html.Br(),
+#         html.Br(),
+#         html.Button('Largest', id='Button_for_Sorting', n_clicks=0),
+#         html.Button('Related to Population', id='Button_for_Normalize', n_clicks=0,style={"float":"right"})],
+#     ),
+#     html.Div(children=[
+#                         dcc.Graph(id="bar_plot", style={'display': 'inline-block','width': '34%'}),
+#                         dcc.Graph(id="world_plot", style={'display': 'inline-block','width': '64%'}),
+#                         ]),
+#     html.Br(),
+#     html.Br(),
+
+#     html.A(html.Button('Show World'),href='/'), #### this one can be improved
     
-    html.Div([dcc.RangeSlider(id="interval_slider",
-                    min=1990,
-                    max=2020,
-                    value=[1995, 2015   ],
-                    step = 1,
-                    className="dcc_control",
-                    marks = None,
-                    tooltip={"placement": "bottom", "always_visible": True},
-                    updatemode='drag')]),
-    dcc.Graph(id='bar_plot_2_2'),
+#     html.Div([dcc.RangeSlider(id="interval_slider",
+#                     min=1990,
+#                     max=2020,
+#                     value=[1995, 2015   ],
+#                     step = 1,
+#                     className="dcc_control",
+#                     marks = None,
+#                     tooltip={"placement": "bottom", "always_visible": True},
+#                     updatemode='drag')]),
+#     dcc.Graph(id='bar_plot_2_2'),
                     
 
-    ########################### CONSUMPTION ########################
-])
+#     ########################### CONSUMPTION ########################
+# ])
 
 
 # ------------------------------------------------------------------------------

@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px  # (version 4.7.0 or higher)
 import plotly
 import plotly.graph_objects as go
+import dash_bootstrap_components as dbc
 
 from tab_1 import bar_plot_cs
 
@@ -84,55 +85,156 @@ def Continent_comp(df, tabstring,value):
     return fig1
 # ---------------------------------------------------------------------------------
 layout = html.Div([
-    html.Div(children = [
-        html.Div([
-            html.Button("Share of renewables",id='Share_of_Renewables', className="btn btn-success"),
-            html.Button("Share of electricity",id='Share_of_Electricity', className="btn btn-info"),
-            ])
-            ]),
-    html.Div(html.H3(tab_string),
-        id='Header_RN'),
+
+    html.Div(
+            [   
+                #Buttons Production-Consumption
+                dbc.Row(
+                    [
+                        html.Div(children = [
+                        html.Div([
+                                html.Button("Share of renewables",id='Share_of_Renewables', className="m-3 btn btn-info"),
+                                html.Button("Share of electricity",id='Share_of_Electricity', className="m-3 btn btn-info"),
+                                ])
+                        ])
+                    ]
+                ),
+                #Title 
+                dbc.Row(
+                    [
+                        html.Div(html.H3(tab_string), id='Header_RN',  className="m-3 text-lg-center text-light"),
+                        html.Div(html.P("Some text explaining what Share of energies is. Maybe it should be a description that changes at the click of the buttons Share of renewables and Share of electricity"), className="m-3 text-lg-center text-light")
+                    ]
+                ),
+                #Buttons and slider
+                dbc.Row(
+                    [
+                        dbc.Col([
+                                html.Button(id='EL_buttonPlay', children='Play', className="m-1 btn btn-success"),
+                                html.Button(id='EL_buttonPause', children='Pause', className="m-1 btn btn-success"),
+                                html.Button(id='EL_buttonReset', children='Reset', className="m-1 btn btn-success"),
+                                ], width=3),
+                        dbc.Col([
+                                dcc.Interval(id='EL_interval_component', interval=1500, n_intervals=0),
+                                dcc.Slider(id='EL_slider', min = 1990, max = 2020, step = 1, value=1990, 
+                                marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
+                                tooltip={"placement": "bottom", "always_visible": True},
+                                #updatemode='drag'
+                                ),
+                        ],width=9)
+                    ]
+                ),
+                #two buttons related to bar and map
+                dbc.Row([dbc.Col([
+                            html.Button('Largest', id='EL_sort_button', n_clicks=0, className="m-3 btn btn-light"),
+                        ],width=2),
+                        dbc.Col([],width=8),
+                        dbc.Col([
+                            html.Button('Related to Population', id='EL_Normalized', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")
+                        ],width=2)
+                ]),
+                ## Bar and world plot
+                dbc.Row(
+                    [
+                        dbc.Col(dbc.Card([dbc.CardHeader("Top 10 countries"),
+                                        html.Br(className="mb-6"),
+                                        dcc.Graph(id="EL_bar_plot"),
+                                        html.Br(className="mb-6")],
+                                        color="secondary"),width=4),
+                        dbc.Col(dbc.Card([dbc.CardHeader("World map"),
+                                        html.Br(className="mb-6"),
+                                        dcc.Graph(id="EL_world_plot"),
+                                        html.Br(className="mb-6")],
+                                        color="secondary", inverse=True),width=8),
+                    ]
+                ),
+
+                html.Br(className="mb-6"),
+                #button and slider
+                dbc.Row(
+                    [
+                        dbc.Col(
+                                html.A(html.Button('Show World',className="m-1 btn btn-light"),href='/'),
+                        width=3),
+                        dbc.Col(
+                                #slider
+                                html.Div([dcc.RangeSlider(id="EL_interval_slider",
+                                        min=1990,
+                                        max=2020,
+                                        value=[1995, 2015   ],
+                                        step = 1,
+                                        className="dcc_control",
+                                        marks = None,
+                                        tooltip={"placement": "bottom", "always_visible": True},
+                                        updatemode='drag')]),
+                                        width=9)
+                    ]
+                ),  
+                #barchart
+                dbc.Row(
+                    [
+                        dbc.Col(
+                                #barchart
+                                dbc.Card([dbc.CardHeader("Shares of Renewable Energy per continent"),
+                                html.Br(className="mb-6"),
+                                dcc.Graph(id='EL_bar_plot_2_2'),
+                                html.Br(className="mb-6")],
+                                color="secondary"),width=12)
+                    ]
+                ),
+            ]
+        ),
+
+    ###
+    # html.Div(children = [
+    #     html.Div([
+    #         html.Button("Share of renewables",id='Share_of_Renewables', className="btn btn-success"),
+    #         html.Button("Share of electricity",id='Share_of_Electricity', className="btn btn-info"),
+    #         ])
+    #         ]),
+    # html.Div(html.H3(tab_string),
+    #     id='Header_RN'),
         
-    html.Div(children = [
-        html.Div([
-            html.Button(id='EL_buttonPlay', children='Play', className="btn btn-success"),
-            html.Button(id='EL_buttonPause', children='Pause', className="btn btn-warning"),
-            html.Button(id='EL_buttonReset', children='Reset', className="btn btn-primary"),
-            dcc.Interval(id='EL_interval_component', interval=1500, n_intervals=0)], style={'width': '15%', 'display': 'inline-block'}),
-        html.Div([
-            dcc.Slider(id='EL_slider', min = 1990, max = 2020, step = 1, value=1990, 
-                    marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
-                    tooltip={"placement": "bottom", "always_visible": True},
-                    #updatemode='drag'
-                    )], style={'width': '75%', 'display': 'inline-block'}),
-        html.Br(),
-        html.Br(),
-        html.Button('Largest', id='EL_sort_button', n_clicks=0, className="btn btn-light"),
-        html.Button('Related to Population', id='EL_Normalized', n_clicks=0,style={"float":"right"}, className="btn btn-light")],
-    ),
+    # html.Div(children = [
+    #     html.Div([
+    #         html.Button(id='EL_buttonPlay', children='Play', className="btn btn-success"),
+    #         html.Button(id='EL_buttonPause', children='Pause', className="btn btn-warning"),
+    #         html.Button(id='EL_buttonReset', children='Reset', className="btn btn-primary"),
+    #         dcc.Interval(id='EL_interval_component', interval=1500, n_intervals=0)], style={'width': '15%', 'display': 'inline-block'}),
+    #     html.Div([
+    #         dcc.Slider(id='EL_slider', min = 1990, max = 2020, step = 1, value=1990, 
+    #                 marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
+    #                 tooltip={"placement": "bottom", "always_visible": True},
+    #                 #updatemode='drag'
+    #                 )], style={'width': '75%', 'display': 'inline-block'}),
+    #     html.Br(),
+    #     html.Br(),
+    #     html.Button('Largest', id='EL_sort_button', n_clicks=0, className="btn btn-light"),
+    #     html.Button('Related to Population', id='EL_Normalized', n_clicks=0,style={"float":"right"}, className="btn btn-light")],
+    # ),
 
-    html.Div(children=[
-                        dcc.Graph(id="EL_bar_plot", style={'display': 'inline-block','width': '34%'}),
-                        dcc.Graph(id="EL_world_plot", style={'display': 'inline-block','width': '64%'}),
-                        ]),
-    html.Br(),
-    html.Br(),##
+    # html.Div(children=[
+    #                     dcc.Graph(id="EL_bar_plot", style={'display': 'inline-block','width': '34%'}),
+    #                     dcc.Graph(id="EL_world_plot", style={'display': 'inline-block','width': '64%'}),
+    #                     ]),
+    # html.Br(),
+    # html.Br(),##
 
-    html.A(html.Button('Show World'),href='/'), #### this one can be improved
+    # html.A(html.Button('Show World'),href='/'), #### this one can be improved
     
-    html.Div([dcc.RangeSlider(id="EL_interval_slider",
-                    min=1990,
-                    max=2020,
-                    value=[1995, 2015   ],
-                    step = 1,
-                    className="dcc_control",
-                    marks = None,
-                    tooltip={"placement": "bottom", "always_visible": True},
-                    updatemode='drag')]),
-    dcc.Graph(id='EL_bar_plot_2_2'),
+    # html.Div([dcc.RangeSlider(id="EL_interval_slider",
+    #                 min=1990,
+    #                 max=2020,
+    #                 value=[1995, 2015   ],
+    #                 step = 1,
+    #                 className="dcc_control",
+    #                 marks = None,
+    #                 tooltip={"placement": "bottom", "always_visible": True},
+    #                 updatemode='drag')]),
+    # dcc.Graph(id='EL_bar_plot_2_2'),
                     
 
-    ])
+],className="m-3")
 # ------------------------------------------------------------------------------
 # Callbacks of this tab
 
