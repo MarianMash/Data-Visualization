@@ -13,15 +13,14 @@ import geojson
 # ---------------------------------------------------------------------------------
 # Data import and cleaning  
 
-df = pd.read_csv('ActualDataset.csv')
+df = pd.read_csv('Final_Dataset.csv')
+
 
         ### Consumption ###
 tab_string = "Share of electricity in total final energy consumption (%)"
-df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
         ### Production ###
 tab_string = "Share of renewables in electricity production (%)"
-df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
 
 with open("geojson11.geojson") as f:
@@ -83,6 +82,52 @@ def Continent_comp(df, tabstring,value):
                 x=0.3
     ))
     return fig1
+    
+def Pie_chart(df1, selected_year,tab_string,cs_name = None):
+    def in_percent(integer1):
+        return "{:.0%}".format(integer1)
+    df_cop = df1.copy()
+    df_cop = df_cop[df_cop['Year'] == selected_year]
+    
+    if cs_name is not None:
+        df_cop = df_cop[df_cop.Country == cs_name]
+    else:
+        pass
+    
+    if tab_string == "Share of electricity in total final energy consumption (%)":
+        share_wind = df_cop["Wind (TWh – sub method)"].sum()/df_cop["Electricity domestic consumption (TWh)"].sum()
+        share_solar = df_cop["Solar (TWh – sub method)"].sum()/df_cop["Electricity domestic consumption (TWh)"].sum()
+        share_other = 1-share_wind-share_solar
+
+
+        the_dict = {"Names":["Other","Solar","Wind"],"Values":[share_other,share_solar,share_wind]}
+
+
+
+    else:  ### Share of renewables in electricity production (%)
+        share_renewables = df_cop["Share of renewables in electricity production (%)"].sum()/len(df_cop["Share of renewables in electricity production (%)"])
+        share_other = 100-share_renewables
+        the_dict = {"Names":["Not Renewable Energy","Renewables Energy"],"Values":[share_other,share_renewables]}
+        
+    
+
+
+
+    piechart=px.pie(
+                data_frame=the_dict,
+                values = the_dict["Values"],
+                names= the_dict["Names"],
+                hole=0.8,
+            color_discrete_sequence = px.colors.qualitative.Antique)
+    piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            },margin={'r':10,'t':0,'l':0,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.40))
+    return piechart
+    
+
+
+
+
 # ---------------------------------------------------------------------------------
 layout = html.Div([
 
@@ -129,9 +174,6 @@ layout = html.Div([
                             html.Button('Largest', id='EL_sort_button', n_clicks=0, className="m-3 btn btn-light"),
                         ],width=2),
                         dbc.Col([],width=8),
-                        dbc.Col([
-                            html.Button('Related to Population', id='EL_Normalized', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")
-                        ],width=2)
                 ]),
                 ## Bar and world plot
                 dbc.Row(
@@ -151,37 +193,77 @@ layout = html.Div([
 
                 html.Br(className="mb-6"),
                 #button and slider
-                dbc.Row(
-                    [
-                        dbc.Col(
-                                html.A(html.Button('Show World',className="m-1 btn btn-light"),href='/'),
-                        width=3),
-                        dbc.Col(
-                                #slider
-                                html.Div([dcc.RangeSlider(id="EL_interval_slider",
-                                        min=1990,
-                                        max=2020,
-                                        value=[1995, 2015   ],
-                                        step = 1,
-                                        className="dcc_control",
-                                        marks = None,
-                                        tooltip={"placement": "bottom", "always_visible": True},
-                                        updatemode='drag')]),
-                                        width=9)
+                html.Div([
+
+                        dbc.Row(
+                            [
+                                dbc.Col(dbc.Card([dbc.CardHeader("Shares of Renewable Energy per continent"), ## can we have here a html as well? Because then we can make it dynamic
+                                                    html.Br(className="mb-6"),
+                                                    dcc.RangeSlider(id="EL_interval_slider",
+                                                                    min=1990,
+                                                                    max=2020,
+                                                                    value=[1995, 2015   ],
+                                                                    step = 1,
+                                                                    className="dcc_control",
+                                                                    marks = None,
+                                                                    tooltip={"placement": "bottom", "always_visible": True},
+                                                                    updatemode='drag'),
+                                                    html.Br(className="mb-6"),
+                                                dcc.Graph(id='EL_bar_plot_2_2'),
+                                                html.Br(className="mb-6")],
+                                                color="light"),width=8),
+                                dbc.Col(dbc.Card([dbc.CardHeader("Total Shares of Renewable Energy"),
+                                                    html.Br(className="mb-6"),
+                                                    dbc.Row([dcc.Slider(id='simple_slider_2_4',
+                                                                        min = 1990, 
+                                                                        max = 2020, 
+                                                                        step = 1, 
+                                                                        value=1990,  
+                                                                        marks = None,
+                                                                        tooltip={"placement": "bottom", "always_visible": True},
+                                                                        updatemode='drag'),
+                                                            #dcc.Dropdown(options= countries,
+                                                            #            value='Portugal',
+                                                            #            id='country_dropdown')
+                                                            ]),
+                                                    html.Br(className="mb-6"),
+                                                dcc.Graph(id='circle_graph_2_4')],
+                                                color="secondary", inverse=True),width=4),
+                            ]
+                        ),
                     ]
-                ),  
-                #barchart
-                dbc.Row(
-                    [
-                        dbc.Col(
-                                #barchart
-                                dbc.Card([dbc.CardHeader("Shares of Renewable Energy per continent"),
-                                html.Br(className="mb-6"),
-                                dcc.Graph(id='EL_bar_plot_2_2'),
-                                html.Br(className="mb-6")],
-                                color="secondary"),width=12)
-                    ]
-                ),
+                )
+                # dbc.Row(
+                #     [
+                #         dbc.Col(
+                #                 html.A(html.Button('Show World',className="m-1 btn btn-light"),href='/'),
+                #         width=3),
+                #         dbc.Col(
+                #                 #slider
+                #                 html.Div([dcc.RangeSlider(id="EL_interval_slider",
+                #                         min=1990,
+                #                         max=2020,
+                #                         value=[1995, 2015   ],
+                #                         step = 1,
+                #                         className="dcc_control",
+                #                         marks = None,
+                #                         tooltip={"placement": "bottom", "always_visible": True},
+                #                         updatemode='drag')]),
+                #                         width=9)
+                #     ]
+                # ),  
+                # #barchart
+                # dbc.Row(
+                #     [
+                #         dbc.Col(
+                #                 #barchart
+                #                 dbc.Card([dbc.CardHeader("Shares of Renewable Energy per continent"),
+                #                 html.Br(className="mb-6"),
+                #                 dcc.Graph(id='EL_bar_plot_2_2'),
+                #                 html.Br(className="mb-6")],
+                #                 color="secondary"),width=12)
+                #     ]
+                # ),
             ]
         ),
 
@@ -293,22 +375,24 @@ def on_click(n_intervals, buttonReset, dragValue):
     Output(component_id='Header_RN', component_property='children'),
 
     Output(component_id = 'EL_sort_button', component_property = 'children'),
-    Output(component_id = 'EL_Normalized', component_property = 'children'),
     Output(component_id ='EL_world_plot',component_property = 'figure'),
     Output(component_id ='EL_bar_plot',component_property = 'figure'),
     Output(component_id ='EL_bar_plot_2_2',component_property = 'figure'),
+    Output(component_id = 'circle_graph_2_4', component_property ='figure'),
+
 
 
     [Input(component_id = 'EL_slider', component_property = 'value'),
     Input(component_id = 'Share_of_Renewables', component_property = 'n_clicks_timestamp'),
     Input(component_id = 'Share_of_Electricity', component_property = 'n_clicks_timestamp'),
-    Input(component_id = 'EL_Normalized', component_property = 'n_clicks'),
     Input(component_id = 'EL_sort_button', component_property = 'n_clicks'),
     Input(component_id = 'EL_interval_slider', component_property = 'value'),
+    Input(component_id ='simple_slider_2_4',component_property = 'value'),
+
     Input(component_id ='EL_world_plot',component_property = 'clickData'),
 
     ])
-def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity, sort_button_value,sort_button2_value,value_bar,c_selection):
+def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_button2_value,value_bar,value_pie,c_selection):
     dff = df.copy()
     dff = dff[dff["Year"]==selected_year]
     
@@ -341,21 +425,14 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity, sort_bu
     
         header = [html.H3(tab_string)]
         
-### Absolute or relative
-    if sort_button_value%2:
-        the_column = f"{tab_string}_div_pop"
-        button2_text = "Per 10000-Capita"
-    else: 
-        button2_text = "Absolute"
-        the_column = tab_string
 
      # Largst / Smallest Button
     if sort_button2_value%2:
-        dfff=dff.nsmallest(10, [the_column]).sort_values(the_column, ascending=False)
+        dfff=dff.nsmallest(10, [tab_string]).sort_values(tab_string, ascending=False)
         
         button_text = "Smallest"
     else: 
-        dfff=dff.nlargest(10, [the_column]).sort_values(the_column, ascending=True)
+        dfff=dff.nlargest(10, [tab_string]).sort_values(tab_string, ascending=True)
         button_text = "Largest"
 
 
@@ -367,15 +444,15 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity, sort_bu
         geojson=gj,
         featureidkey = "properties.iso_a3",
         locations="iso_a3",
-        color=dff[the_column],
+        color=dff[tab_string],
         color_continuous_scale='Darkmint',
-        range_color=(0, dff[the_column].max()),
+        range_color=(0, dff[tab_string].max()),
 
         animation_frame = dff.Year,
         animation_group = dff.iso_a3,
 
         hover_name='Country', # here maybe Country
-        hover_data={'Country': True, the_column: True,"iso_a3":False},
+        hover_data={'Country': True, tab_string: True,"iso_a3":False},
         mapbox_style='light',
         zoom=1.01,
         center={'lat': 19, 'lon': 11},
@@ -387,7 +464,7 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity, sort_bu
     margin={'r':0,'t':0,'l':0,'b':0},
         coloraxis_colorbar={
             'title':'Mtoe',
-            'tickvals':(0,round(dff[the_column].max())),
+            'tickvals':(0,round(dff[tab_string].max())),
          }
          )
     fig.update_coloraxes(colorbar_xanchor="left",   
@@ -403,12 +480,12 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity, sort_bu
  
 
     bar_hor = px.bar(dfff, 
-                x=the_column, 
+                x=tab_string, 
                 y="Country", orientation='h',
                 barmode = "group",
-                color=dfff[the_column],
+                color=dfff[tab_string],
                 color_continuous_scale='Darkmint',
-                range_color=(round(dfff.iloc[9][the_column]), round(dfff.iloc[0][the_column])),
+                range_color=(round(dfff.iloc[9][tab_string]), round(dfff.iloc[0][tab_string])),
     )
     # bar_hor.update_layout(coloraxis_colorbar={
     #         'title':'Mtoe',
@@ -488,11 +565,14 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity, sort_bu
         location = c_selection['points'][0]['location']
         cs_name = dff[dff.iso_a3 == location]["Country"].to_list()[0]
 
+
         figure1 = bar_plot_cs(df,value_bar,cs_name,tab_string)
+        pie = Pie_chart(df, value_pie,tab_string,cs_name)
 
         
-        return header, button_text , button2_text, fig, bar_hor, figure1 
+        return header, button_text , fig, bar_hor, figure1 , pie
     else:
         fig2 =  Continent_comp(df, tab_string,value_bar)
+        pie = Pie_chart(df, value_pie,tab_string)
 
-        return header, button_text , button2_text, fig, bar_hor, fig2 
+        return header, button_text , fig, bar_hor, fig2 , pie
