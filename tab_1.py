@@ -127,9 +127,7 @@ layout = html.Div([
                             dbc.Col([
                                             html.Button("Production",id='Production', className="mx-2 btn btn-info"),
                                             html.Button("Consumption",id='Consumption', className="btn btn-info")
-                            ],width=3),
-                            dbc.Col([
-                            ],width=9)
+                            ],width=3)
                         ]
                 ),
                 #Title 
