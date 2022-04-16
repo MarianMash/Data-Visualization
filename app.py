@@ -41,9 +41,9 @@ app.layout = html.Div([
     dbc.Tabs(
             [
                 dbc.Tab(tab_id='tab-1-example', label="Total Energy"),
-                dbc.Tab(tab_id='tab-2-example', label="Tab Two"),
-                dbc.Tab(tab_id='tab-3-example', label="Tab Three"),
-                dbc.Tab(tab_id='tab-4-example', label="Tab Four")
+                dbc.Tab(tab_id='tab-2-example', label="Energy Comparison"),
+                dbc.Tab(tab_id='tab-3-example', label="Electricity"),
+                dbc.Tab(tab_id='tab-4-example', label="Renewables")
             ],
             id="tabs-example",
             active_tab="tab-1-example",

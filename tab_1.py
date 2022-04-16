@@ -7,6 +7,7 @@ import plotly.express as px  # (version 4.7.0 or higher)
 import plotly
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
+import plotly.io as pio
 
 
 #pip install geojson
@@ -118,20 +119,18 @@ for country in df['Country'].unique():
 
 layout = html.Div([
 
-    html.Br(),
-
     html.Div(
             [   
                 #Buttons Production-Consumption
                 dbc.Row(
-                    [
-                        html.Div(children = [
-                        html.Div([
-                                html.Button("Production",id='Production', className="m-1 btn btn-info"),
-                                html.Button("Consumption",id='Consumption', className="m-1 btn btn-info"),
-                                ])
-                        ])
-                    ]
+                        [
+                            dbc.Col([
+                                            html.Button("Production",id='Production', className="mx-2 btn btn-info"),
+                                            html.Button("Consumption",id='Consumption', className="btn btn-info")
+                            ],width=3),
+                            dbc.Col([
+                            ],width=9)
+                        ]
                 ),
                 #Title 
                 dbc.Row(
@@ -161,11 +160,11 @@ layout = html.Div([
                 ),
                 #two buttons related to bar and map
                 dbc.Row([dbc.Col([
-                            html.Button('Largest', id='sort_button', n_clicks=0, className="m-3 btn btn-light"),
+                            html.Button('Largest', id='sort_button', n_clicks=0, className="mb-2 mt-3 btn btn-light"),
                         ],width=2),
                         dbc.Col([],width=8),
                         dbc.Col([
-                            html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="m-3 btn btn-light")
+                            html.Button('Related to Population', id='Normalized', n_clicks=0,style={"float":"right"}, className="mb-2 mt-3 btn btn-light")
                         ],width=2)
                 ]),
                 #Bar chart and map graph
@@ -175,7 +174,7 @@ layout = html.Div([
                                         html.Br(className="mb-6"),
                                         dcc.Graph(id="bar_hor_1"),
                                         html.Br(className="mb-6")],
-                                        color="secondary"),width=4),
+                                        color="secondary", inverse=True),width=4),
                         dbc.Col(dbc.Card([dbc.CardHeader("World map"),
                                         html.Br(className="mb-6"),
                                         dcc.Graph(id="world"),
@@ -210,7 +209,7 @@ layout = html.Div([
                                     html.Br(className="mb-6"),
                                 dcc.Graph(id='bar_chart_2'),
                                 html.Br(className="mb-6")],
-                                color="light"),width=8),
+                                color="secondary", inverse=True),width=8),
                 dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per Country and energy type"),
                                     html.Br(className="mb-6"),
                                     dbc.Row([dcc.Slider(id='simple_slider',
@@ -438,7 +437,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
             "plot_bgcolor": "rgba(0, 0, 0, 0)",
             "paper_bgcolor": "rgba(0, 0, 0, 0)",
             },margin={'r':0,'t':0,'l':15,'b':0})
-    bar_hor.update_traces(text=list(dfff.Country), textposition='inside',textfont_color='White')
+    bar_hor.update_traces(text=list(dfff.Country), textposition='inside')# ,textfont_color='White')
     bar_hor.update_yaxes(visible=False, showticklabels=False)
     bar_hor.update_xaxes(visible=False, showticklabels=False)
     bar_hor.update(layout_coloraxis_showscale=False)
