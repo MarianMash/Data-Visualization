@@ -171,7 +171,7 @@ layout = html.Div([
                 ),
                 #two buttons related to bar and map
                 dbc.Row([dbc.Col([
-                            html.Button('Largest', id='EL_sort_button', n_clicks=0, className="m-3 btn btn-light"),
+                            html.Button('Largest', id='EL_sort_button', n_clicks=0, className="mb-2 mt-3 btn btn-light"),
                         ],width=2),
                         dbc.Col([],width=8),
                 ]),
@@ -182,7 +182,7 @@ layout = html.Div([
                                         html.Br(className="mb-6"),
                                         dcc.Graph(id="EL_bar_plot"),
                                         html.Br(className="mb-6")],
-                                        color="secondary"),width=4),
+                                        color="secondary", inverse=True),width=4),
                         dbc.Col(dbc.Card([dbc.CardHeader("World map"),
                                         html.Br(className="mb-6"),
                                         dcc.Graph(id="EL_world_plot"),
@@ -211,7 +211,7 @@ layout = html.Div([
                                                     html.Br(className="mb-6"),
                                                 dcc.Graph(id='EL_bar_plot_2_2'),
                                                 html.Br(className="mb-6")],
-                                                color="light"),width=8),
+                                                color="secondary", inverse=True),width=8),
                                 dbc.Col(dbc.Card([dbc.CardHeader("Total Shares of Renewable Energy"),
                                                     html.Br(className="mb-6"),
                                                     dbc.Row([dcc.Slider(id='simple_slider_2_4',
