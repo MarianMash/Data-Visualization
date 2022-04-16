@@ -138,8 +138,8 @@ layout = html.Div([
                     [
                         html.Div(children = [
                         html.Div([
-                                html.Button("Share of renewables",id='Share_of_Renewables', className="m-3 btn btn-info"),
-                                html.Button("Share of electricity",id='Share_of_Electricity', className="m-3 btn btn-info"),
+                                html.Button("Share of renewables",id='Share_of_Renewables', className="m-1 btn btn-info"),
+                                html.Button("Share of electricity",id='Share_of_Electricity', className="m-1 btn btn-info"),
                                 ])
                         ])
                     ]

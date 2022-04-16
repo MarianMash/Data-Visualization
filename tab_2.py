@@ -132,7 +132,7 @@ layout = html.Div([
             ]
         )
                     
-    ]  
+    ], className="m-3"  
 )
 
     # html.Br(),
