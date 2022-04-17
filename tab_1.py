@@ -66,7 +66,9 @@ def bar_plot_cs(df, value, location,tab_string):
                 yanchor="bottom",
                 y=-0.2,
                 xanchor="left",
-                x=0.3))
+                x=0.3),
+            yaxis=dict(title="TWh")
+            )
     return fig_cs
 
 def pie_func(df,value_pie,cs_name,list_1): 
@@ -234,7 +236,8 @@ layout = html.Div([
                                             #            id='country_dropdown')
                                             ]),
                                     html.Br(className="mb-6"),
-                                dcc.Graph(id='circle_graph')],
+                                dcc.Graph(id='circle_graph'),
+                                html.Br(className="mb-6")],
                                 color="secondary", inverse=True),width=4),
             ]
         ),
