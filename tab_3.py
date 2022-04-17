@@ -18,6 +18,7 @@ df = pd.read_csv('Merged_Energy_Dataset.csv')
 
         ### Consumption ###
 tab_string = "Electricity production (TWh)"
+header_barplot_2_2_string = "Total Electricity Production "
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
         ### Production ###
@@ -102,13 +103,16 @@ layout = html.Div([
         ),
     html.P("To display the values of a specific country in the following plot, click on it in the map. To reset the statistics click on the following button"),
     #html.Br(),
-    html.A(html.Button('Show World', className="m-1 btn btn-light"),href='/'),
+    #html.A(html.Button('Show World', className="m-1 btn btn-light"),href='/'),
+    html.A(html.Button(id = 'btnShowWorld', children = 'Show World', className="m-1 btn btn-light")),
     html.Div(
             [
 
                 dbc.Row(
                     [
-                        dbc.Col(dbc.Card([dbc.CardHeader("Total Electricity Production per continent"), ## can we have here a html as well? Because then we can make it dynamic
+                        dbc.Col(dbc.Card([dbc.CardHeader(html.H3(header_barplot_2_2_string),id='header_barplot_2_2', className="m-3 text-lg-center text-light",
+                            #"Total Electricity Production per continent"
+                            ), ## can we have here a html as well? Because then we can make it dynamic
                                             html.Br(className="mb-6"),
                                             dcc.RangeSlider(id="interval_slider",
                                                             min=1990,
@@ -267,13 +271,13 @@ def on_click(n_intervals, buttonReset, dragValue):
 
 @callback(
     Output(component_id='Header_elec', component_property='children'),
-
     Output(component_id = 'Button_for_Sorting', component_property = 'children'),
     Output(component_id = 'Button_for_Normalize', component_property = 'children'),
     Output(component_id ='world_plot',component_property = 'figure'),
     Output(component_id ='bar_plot',component_property = 'figure'),
     Output(component_id ='bar_plot_2_2',component_property = 'figure'),
-
+    Output(component_id='header_barplot_2_2', component_property='children'),
+    Output(component_id='btnShowWorld', component_property='n_clicks_timestamp'),
 
     [Input(component_id = 'Slider', component_property = 'value'),
     Input(component_id = 'Prod_1', component_property = 'n_clicks_timestamp'),
@@ -282,9 +286,9 @@ def on_click(n_intervals, buttonReset, dragValue):
     Input(component_id = 'Button_for_Sorting', component_property = 'n_clicks'),
     Input(component_id = 'interval_slider', component_property = 'value'),
     Input(component_id ='world_plot',component_property = 'clickData'),
-
+    Input(component_id='btnShowWorld', component_property='n_clicks_timestamp'),
     ])
-def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_button_value,sort_button2_value,value_bar,c_selection):
+def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_button_value,sort_button2_value,value_bar,c_selection, btnShowWorld):
     dff = df.copy()
     dff = dff[dff["Year"]==selected_year]
     
@@ -303,8 +307,10 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
 
     # list_1 = production
     tab_string = "Electricity production (TWh)"
+    header_barplot_2_2_string = "Total Electricity Production "
 
     header = [html.H3(tab_string)]
+    #header_barplot_2_2 = [html.H3(header_barplot_2_2_string)]
     
 ### determine which button was clicked last by comparing timestamps
     if Timestamp_Button_Prod<Timestamp_Button_Con:
@@ -461,16 +467,21 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
                 x=0.3),
             yaxis=dict(title="TWh"))
 
+    if btnShowWorld is not None:
+        c_selection = None
+
     if c_selection is not None:
         
         location = c_selection['points'][0]['location']
         cs_name = dff[dff.iso_a3 == location]["Country"].to_list()[0]
 
         figure1 = bar_plot_cs(df,value_bar,cs_name,tab_string)
-
+        header_barplot_2_2_string = 'Total Electricity Production of ' + cs_name
+        header_barplot_2_2 = [html.H3(header_barplot_2_2_string)] 
         
-        return header, button_text , button2_text, fig, bar_hor, figure1 
+        return header, button_text , button2_text, fig, bar_hor, figure1, header_barplot_2_2, None 
     else:
         # fig2 =  fig2
-
-        return header, button_text , button2_text, fig, bar_hor, fig2 
+        header_barplot_2_2_string = 'Total Electricity Production per Continent'
+        header_barplot_2_2 = [html.H3(header_barplot_2_2_string)] 
+        return header, button_text , button2_text, fig, bar_hor, fig2, header_barplot_2_2, None 
