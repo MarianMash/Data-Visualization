@@ -64,12 +64,12 @@ layout = html.Div([
     dbc.Row(
         [
             dbc.Col([
-                    html.Button(id='buttonShowSelectedOnly', children='Show Selected Only', n_clicks_timestamp=0, className="m-3 btn btn-light"),
+                    html.Button(id='buttonShowSelectedOnly', children='Show Selected Only', n_clicks_timestamp=0, className="m-2 btn btn-light"),
                     html.Button(id='buttonDefault', children='Default', n_clicks_timestamp=0, className="m-1 btn btn-light"),
                     html.Button(id='buttonGDP', children='GDP', n_clicks_timestamp=0, className="m-1 btn btn-light"),
                     html.Button(id='buttonPopulation', children='Population', n_clicks_timestamp=0, className="m-1 btn btn-light"),
                     html.Button(id='buttonArea', children='Area', n_clicks_timestamp=0, className="m-1 btn btn-light")
-            ], width=6),
+            ], width=5),
             dbc.Col([
                     dcc.RadioItems(
                     ['Linear X axis', 'Log X axis'],
@@ -289,11 +289,12 @@ def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, b
             go.Bar(
                 name = dropSelection,
                 x = barNames,
-                y = barValues,
+                y = barValues
             )
         )
 
     figBar = go.Figure(data=dataHolder)
+    figBar.update_layout(template = "plotly_dark", yaxis=dict(title="Twh"))
 
     for trace in figBar['data']:
         trace['showlegend'] = False
