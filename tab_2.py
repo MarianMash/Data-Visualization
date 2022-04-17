@@ -20,12 +20,6 @@ countryListComparison = []
 for country in file['Country'].unique():
     countryListComparison.append({'label':str(country),'value':country})
 
-#options1 = [{'label': 'Portugal', 'value': 'Portugal'},
-#           {'label': 'Romania', 'value': 'Romania'},
-#           {'label': 'Spain', 'value': 'Spain'}, 
-#           {'label': 'Sweden', 'value': 'Sweden'}, 
-#           {'label': 'United Kingdom', 'value': 'United Kingdom'}]
-
 # ---------------------------------------------------------------------------------
 # Layout of this tab
 
@@ -109,60 +103,6 @@ layout = html.Div([
                             color="secondary", inverse=True),width=4),
         ]
     ),
-
-    ###
-    # html.Br(),
-    # html.Div([
-    #     html.Div([
-    #         dcc.Interval(id='intervalComponentComparison', interval=1500, n_intervals=0),
-    #         html.Button(id='buttonPlayComparison', children='Play', style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
-    #         html.Button(id='buttonPauseComparison', children='Pause', style = {'display': 'inline-block', "margin-left": "10px", "verticalAlign": "middle"}),
-    #         html.Button(id='buttonResetComparison', children='Reset', style = {'display': 'inline-block', "margin-left": "10px", "verticalAlign": "middle"}),
-    #         ], style = {'width': '20%',  'float': 'left','display': 'inline-block'}),
-    #     html.Div([
-    #         dcc.Slider(id='sliderComparison', min = 1990, max = 2020, step = 1, value=1990, 
-    #                 marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
-    #                 tooltip={"placement": "bottom", "always_visible": True}),
-    #     ], style = {'width': '50%',  'float': 'left','display': 'inline-block'}),
-    #     html.Div([
-    #         dcc.Dropdown(
-    #             id='drop1',
-    #             options=countryListComparison,
-    #             value=['Portugal', 'Spain'], 
-    #             multi = True),
-    #         html.Br(),
-    #     ], style={'width': 'auto', 'float': 'middle', 'display': 'inline-block', "margin-left": "10px", "margin-right": "20px"})
-    # ], style = {'width': 'auto', 'height': '50px'}),
-    # html.Br(),
-    # html.Div([
-    #     html.Button(id='buttonShowSelectedOnly', children='Show Selected Only', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "margin-right": "20px", "verticalAlign": "middle"}),
-    #     html.Button(id='buttonDefault', children='Default', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
-    #     html.Button(id='buttonGDP', children='GDP', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
-    #     html.Button(id='buttonPopulation', children='Population', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
-    #     html.Button(id='buttonArea', children='Area', n_clicks_timestamp=0, style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}),
-    #     dcc.RadioItems(
-    #         ['Linear X axis', 'Log X axis'],
-    #         'Linear X axis',
-    #         id='xaxis_type',
-    #         inline=True, 
-    #         style = {'display': 'inline-block', "margin-left": "40px", "verticalAlign": "middle"}
-    #     ),
-    
-    #     dcc.RadioItems(
-    #         ['Linear Y axis', 'Log Y axis'],
-    #         'Linear Y axis',
-    #         id='yaxis_type',
-    #         inline=True,
-    #         style = {'display': 'inline-block', "margin-left": "20px", "verticalAlign": "middle"}
-    #     ),
-    # ]),
-    # html.Br(),
-    # html.Div([
-    #     dcc.Graph(id='electricity_graph', style={'width': '70%', 'display': 'inline-block'}),
-    #     dcc.Graph(id='electricity_bar', style={'width': '30%', 'float': 'right', 'display': 'inline-block'}),
-    # ], className = 'row'),
-    # html.Br(),
-
 ], className="m-3")
 
 # ---------------------------------------- CALLBACKS --------------------------------------##
