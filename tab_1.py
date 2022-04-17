@@ -236,7 +236,8 @@ layout = html.Div([
                                             #            id='country_dropdown')
                                             ]),
                                     html.Br(className="mb-6"),
-                                dcc.Graph(id='circle_graph')],
+                                dcc.Graph(id='circle_graph'),
+                                html.Br(className="mb-6")],
                                 color="secondary", inverse=True),width=4),
             ]
         ),
