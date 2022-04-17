@@ -33,7 +33,9 @@ layout = html.Div([
     dbc.Row(
         [
             html.Div(html.H3("Comparison of total energy production and consumption"), className="m-3 text-lg-center text-light"),
-            html.Div(html.P("""Some description"""), className="m-3 text-lg-center text-light")
+            dbc.Col([
+                html.Div(html.P("""Some description"""), className="m-3 text-lg text-light")
+            ],width={'size':8, 'offset':2})
         ]
     ),
     #Buttons - slider - dropdown

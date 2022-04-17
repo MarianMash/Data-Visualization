@@ -148,7 +148,9 @@ layout = html.Div([
                 dbc.Row(
                     [
                         html.Div(html.H3(tab_string), id='Header_RN',  className="m-3 text-lg-center text-light"),
-                        html.Div(html.P(description_string), id='Second_Header_RN', className="m-3 text-lg-center text-light")
+                        dbc.Col([
+                            html.Div(html.P(description_string), id='Second_Header_RN', className="m-3 text-lg text-light")
+                        ],width={'size':8, 'offset':2})
                     ]
                 ),
                 #Buttons and slider
