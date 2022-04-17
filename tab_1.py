@@ -28,6 +28,10 @@ tab_string = "Total production of Energy (Twh)"
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
 
+# headers for the barchart and piechart of the second row 
+header_barplot_2_string = "Total energy "
+header_pieplot_2_string = "Total energy "
+
 with open("geojson11.geojson") as f:
     gj = geojson.load(f)
 
@@ -202,13 +206,15 @@ layout = html.Div([
    # html.H3("Total consumption of Energy (Twh)"),
     html.P("To display the values of a specific country in the following plots, click on it in the map. To reset the statistics click on the following button"),
     #html.Br(),
-    html.A(html.Button('Show World', className="m-1 btn btn-light"),href='/'),
+    html.A(html.Button(id = 'btnShowWorldT1', children = 'Show World', className="m-1 btn btn-light")),
     html.Div(
     [
 
         dbc.Row(
             [
-                dbc.Col(dbc.Card([dbc.CardHeader("Total energy production per continent (TWh)"), ## can we have here a html as well? Because then we can make it dynamic
+                dbc.Col(dbc.Card([dbc.CardHeader(header_barplot_2_string, id='header_barplot_2'
+                    #"Total energy production per continent (TWh)"
+                    ), 
                                     html.Br(className="mb-6"),
                                     dcc.RangeSlider(id="range_slider",
                                                     min=1990,
@@ -223,7 +229,9 @@ layout = html.Div([
                                 dcc.Graph(id='bar_chart_2'),
                                 html.Br(className="mb-6")],
                                 color="secondary", inverse=True),width=8),
-                dbc.Col(dbc.Card([dbc.CardHeader("Total energy production per country and energy type"),
+                dbc.Col(dbc.Card([dbc.CardHeader(header_pieplot_2_string, id='header_pieplot_2'
+                    #"Total energy production per country and energy type"
+                    ),
                                     html.Br(className="mb-6"),
                                     dbc.Row([dcc.Slider(id='simple_slider',
                                                         min = 1990, 
@@ -317,8 +325,10 @@ def on_click(n_intervals, buttonReset, dragValue):
 
     Output(component_id ='bar_chart_2', component_property ='figure'),
 
-    Output(component_id = 'ticker_header', component_property = 'children')
-
+    Output(component_id = 'ticker_header', component_property = 'children'),
+    Output(component_id='header_barplot_2', component_property='children'),
+    Output(component_id='header_pieplot_2', component_property='children'),
+    Output(component_id='btnShowWorldT1', component_property='n_clicks_timestamp'),
 
     ],
     [Input(component_id = 'my_slider', component_property = 'value'),
@@ -331,9 +341,10 @@ def on_click(n_intervals, buttonReset, dragValue):
     Input(component_id = 'range_slider', component_property = 'value'),
     Input(component_id = 'ticker_header', component_property = 'children'),
     Input(component_id ='world',component_property = 'clickData'),
+    Input(component_id='btnShowWorldT1', component_property='n_clicks_timestamp'),
     ])
 
-def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_Button, Con_Time_Button, value_pie, value_bar,header_value,c_selection):
+def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_Button, Con_Time_Button, value_pie, value_bar,header_value,c_selection, btnShowWorld):
     dff = df.copy()
     dff = dff[dff["Year"]==selected_year]
     
@@ -351,7 +362,10 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
         Prod_Time_Button = 0
 
     list_1 = production
+    # initialize generic strings 
     tab_string = "Total production of Energy (Twh)"
+    header_barplot_2_string = "Total energy "
+    header_pieplot_2_string = "Total energy "
 
     header = [html.H3(tab_string)]
     
@@ -360,13 +374,15 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
         list_1 = consumption
         tab_string = "Total consumption of Energy (Twh)"
         header = [html.H3(tab_string)]
+        header_barplot_2_string += 'consumption '
+        header_pieplot_2_string += 'consumption '
 
-    if Prod_Time_Button > Con_Time_Button:
+    if Prod_Time_Button >= Con_Time_Button:
         list_1 = production 
-        tab_string = "Total production of Energy (Twh)"
-    
+        tab_string = "Total production of Energy (Twh)"    
         header = [html.H3(tab_string)]
-        
+        header_barplot_2_string += 'production '
+        header_pieplot_2_string += 'production '
 
 
 ### Absolute or relative
@@ -521,21 +537,42 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
                 x=0.3),
             yaxis=dict(title="TWh")
             )
+
+    # show world button 
+    if btnShowWorld is not None:
+        c_selection = None
+
     if c_selection is not None:
         
         location = c_selection['points'][0]['location']
         cs_name = dff[dff.iso_a3 == location]["Country"].to_list()[0]
 
+        #create figures
         figure1 = bar_plot_cs(df,value_bar,cs_name,tab_string)
         piechart = pie_func(df,value_pie,cs_name,list_1)
 
+        # generate header string for the barplot
+        header_barplot_2_string += 'of ' + cs_name
+        header_barplot_2 = [html.P(header_barplot_2_string)]
+
+        #generate header string for the piechart
+        header_pieplot_2_string += 'of ' + cs_name + ' per energy type'
+        header_pieplot_2 = [html.P(header_pieplot_2_string)]
         
-        return fig, bar_hor, button_text , button2_text, piechart, figure1 , header
+        return fig, bar_hor, button_text , button2_text, piechart, figure1 , header, header_barplot_2, header_pieplot_2, None
     else:
         # fig2 =  fig2
         piechart = pie_func(df,value_pie,1,list_1)
 
-        return fig, bar_hor, button_text , button2_text, piechart, fig2 , header
+        # generate header string for the barplot
+        header_barplot_2_string += 'per continent'
+        header_barplot_2 = [html.P(header_barplot_2_string)] 
+
+        #generate header string for the piechart
+        header_pieplot_2_string += 'per energy type'
+        header_pieplot_2 = [html.P(header_pieplot_2_string)] 
+
+        return fig, bar_hor, button_text , button2_text, piechart, fig2 , header, header_barplot_2, header_pieplot_2, None
 
 
 #circle graph of total consumption of all features by country

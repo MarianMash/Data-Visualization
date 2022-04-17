@@ -20,11 +20,12 @@ countryListComparison = []
 for country in file['Country'].unique():
     countryListComparison.append({'label':str(country),'value':country})
 
-options1 = [{'label': 'Portugal', 'value': 'Portugal'},
-           {'label': 'Romania', 'value': 'Romania'},
-           {'label': 'Spain', 'value': 'Spain'}, 
-           {'label': 'Sweden', 'value': 'Sweden'}, 
-           {'label': 'United Kingdom', 'value': 'United Kingdom'}]
+#options1 = [{'label': 'Portugal', 'value': 'Portugal'},
+#           {'label': 'Romania', 'value': 'Romania'},
+#           {'label': 'Spain', 'value': 'Spain'}, 
+#           {'label': 'Sweden', 'value': 'Sweden'}, 
+#           {'label': 'United Kingdom', 'value': 'United Kingdom'}]
+
 # ---------------------------------------------------------------------------------
 # Layout of this tab
 

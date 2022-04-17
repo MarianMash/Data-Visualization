@@ -18,7 +18,7 @@ df = pd.read_csv('Merged_Energy_Dataset.csv')
 
         ### Consumption ###
 tab_string = "Electricity production (TWh)"
-header_barplot_2_2_string = "Total Electricity Production "
+header_barplot_2_2_string = "Total Electricity "
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
         ### Production ###
@@ -135,93 +135,12 @@ layout = html.Div([
     ], className="m-3"  
 )
 
-    # html.Br(),
-    # html.A(html.Button('Show World', className="m-1 btn btn-light"),href='/'),
-    # html.Div(
-    # [
-
-    #     dbc.Row(
-    #         [
-    #             dbc.Col(dbc.Card([dbc.CardHeader("Total Electricity Production per continent"), ## can we have here a html as well? Because then we can make it dynamic
-    #                                 html.Br(className="mb-6"),
-    #                                 dcc.RangeSlider(id="interval_slider",
-    #                                                 min=1990,
-    #                                                 max=2020,
-    #                                                 value=[1995, 2015   ],
-    #                                                 step = 1,
-    #                                                 className="dcc_control",
-    #                                                 marks = None,
-    #                                                 tooltip={"placement": "bottom", "always_visible": True},
-    #                                                 updatemode='drag'),
-    #                                 html.Br(className="mb-6"),
-    #                             dcc.Graph(id='bar_chart_2_2'),
-    #                             html.Br(className="mb-6")],
-    #                             color="light"),width=8),
-    #             dbc.Col(width=4),
-    #         ]
-    #     ),
-    # ]
-    # )
-
-# layout = html.Div([
-#     html.Div(children = [
-#         html.Div([
-#             html.Button("Production",id='Prod_1'),
-#             html.Button("Consumption",id='Cons_1'),
-#             ])
-#             ]),
-#     html.Div(html.H3(tab_string),
-#         id='Header_elec'
-#     ),
-#     html.Div(children = [
-#         html.Div([
-#             html.Button(id='PlayButton', children='Play'),
-#             html.Button(id='PauseButton', children='Pause'),
-#             html.Button(id='ResetButton', children='Reset'),
-#             dcc.Interval(id='IntervalComponent', interval=1500, n_intervals=0)], style={'width': '15%', 'display': 'inline-block'}),
-#         html.Div([
-#             dcc.Slider(id='Slider', min = 1990, max = 2020, step = 1, value=1990, 
-#                     marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
-#                     tooltip={"placement": "bottom", "always_visible": True},
-#                     #updatemode='drag'
-#                     )], style={'width': '75%', 'display': 'inline-block'}),
-#         html.Br(),
-#         html.Br(),
-#         html.Button('Largest', id='Button_for_Sorting', n_clicks=0),
-#         html.Button('Related to Population', id='Button_for_Normalize', n_clicks=0,style={"float":"right"})],
-#     ),
-#     html.Div(children=[
-#                         dcc.Graph(id="bar_plot", style={'display': 'inline-block','width': '34%'}),
-#                         dcc.Graph(id="world_plot", style={'display': 'inline-block','width': '64%'}),
-#                         ]),
-#     html.Br(),
-#     html.Br(),
-
-#     html.A(html.Button('Show World'),href='/'), #### this one can be improved
-    
-#     html.Div([dcc.RangeSlider(id="interval_slider",
-#                     min=1990,
-#                     max=2020,
-#                     value=[1995, 2015   ],
-#                     step = 1,
-#                     className="dcc_control",
-#                     marks = None,
-#                     tooltip={"placement": "bottom", "always_visible": True},
-#                     updatemode='drag')]),
-#     dcc.Graph(id='bar_plot_2_2'),
-                    
-
-#     ########################### CONSUMPTION ########################
-# ])
-
-
 # ------------------------------------------------------------------------------
 # Callbacks of this tab
 @callback([
     Output(component_id='IntervalComponent', component_property='disabled'),
     Output(component_id='PlayButton', component_property='n_clicks'), 
     Output(component_id='PauseButton', component_property='n_clicks'),
-    #Output(component_id='msg-container', component_property='children')
     ],
     [Input(component_id='PlayButton', component_property='n_clicks'),
     Input(component_id='PauseButton', component_property='n_clicks'),
@@ -231,17 +150,16 @@ layout = html.Div([
     ]
 )
 def enable_interval_update(PlayButton, PauseButton, buttonReset, stepper, dragValue):
-    #msg = 'play: {}, pause: {}, reset: {}, stepper: {}, drag: {}'.format(buttonPlay, buttonPause, buttonReset, stepper, dragValue)
     if not PlayButton:
         PlayButton = 0
     if not PauseButton:
         PauseButton = 0
 
     if PlayButton > PauseButton:
-        return False, 1, 0#, msg 
+        return False, 1, 0
     
     else:
-        return True, 0, 0#, msg
+        return True, 0, 0
 
 
 @callback(
@@ -307,7 +225,7 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
 
     # list_1 = production
     tab_string = "Electricity production (TWh)"
-    header_barplot_2_2_string = "Total electricity production "
+    header_barplot_2_2_string = "Total electricity "
 
     header = [html.H3(tab_string)]
     #header_barplot_2_2 = [html.H3(header_barplot_2_2_string)]
@@ -316,12 +234,13 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
     if Timestamp_Button_Prod<Timestamp_Button_Con:
         # list_1 = consumption
         tab_string = "Domestic electricity consumption (TWh)"
+        header_barplot_2_2_string += 'consumption '
         header = [html.H3(tab_string)]
 
-    if Timestamp_Button_Prod > Timestamp_Button_Con:
+    if Timestamp_Button_Prod >= Timestamp_Button_Con:
         # list_1 = production 
-        tab_string = "Electricity production (TWh)"
-    
+        tab_string = "Domestic electricity production (TWh)"
+        header_barplot_2_2_string += 'production '
         header = [html.H3(tab_string)]
         
 ### Absolute or relative
@@ -476,12 +395,12 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
         cs_name = dff[dff.iso_a3 == location]["Country"].to_list()[0]
 
         figure1 = bar_plot_cs(df,value_bar,cs_name,tab_string)
-        header_barplot_2_2_string = 'Total electricity production of ' + cs_name
+        header_barplot_2_2_string += 'of ' + cs_name
         header_barplot_2_2 = [html.P(header_barplot_2_2_string)] 
         
         return header, button_text , button2_text, fig, bar_hor, figure1, header_barplot_2_2, None 
     else:
         # fig2 =  fig2
-        header_barplot_2_2_string = 'Total electricity production per continent'
+        header_barplot_2_2_string += 'per continent'
         header_barplot_2_2 = [html.P(header_barplot_2_2_string)] 
         return header, button_text , button2_text, fig, bar_hor, fig2, header_barplot_2_2, None 
