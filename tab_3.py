@@ -16,21 +16,18 @@ import geojson
 
 df = pd.read_csv('Merged_Energy_Dataset.csv')
 
-        ### Consumption ###
+# Production
 tab_string = "Electricity production (TWh)"
 header_barplot_2_2_string = "Total Electricity "
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
-        ### Production ###
+# Consumption
 tab_string = "Domestic electricity consumption (TWh)"
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
 
 with open("geojson11.geojson") as f:
     gj = geojson.load(f)
-
-
-####################################
 
 # ---------------------------------------------------------------------------------
 # Layout of this tab
@@ -72,7 +69,6 @@ layout = html.Div([
                                 dcc.Slider(id='Slider', min = 1990, max = 2020, step = 1, value=1990, 
                                             marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
                                             tooltip={"placement": "bottom", "always_visible": True},
-                                            #updatemode='drag'
                                             )
                         ],width=9)
                     ]
@@ -104,15 +100,13 @@ layout = html.Div([
             ]
         ),
     html.P("To display the values of a specific country in the following plot, click on it in the map. To reset the statistics click on the following button"),
-    #html.Br(),
-    #html.A(html.Button('Show World', className="m-1 btn btn-light"),href='/'),
     html.A(html.Button(id = 'btnShowWorld', children = 'Show World', className="m-1 btn btn-light")),
     html.Div(
             [
 
                 dbc.Row(
                     [
-                        dbc.Col(dbc.Card([dbc.CardHeader(header_barplot_2_2_string, id='header_barplot_2_2'), ## can we have here a html as well? Because then we can make it dynamic
+                        dbc.Col(dbc.Card([dbc.CardHeader(header_barplot_2_2_string, id='header_barplot_2_2'), 
                                             html.Br(className="mb-6"),
                                             dcc.RangeSlider(id="interval_slider",
                                                             min=1990,
@@ -212,9 +206,6 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
     
 ########################################################################################################################################################
     ############## 
-
-    # Normalize Button
-        # Production or Consumption
     
     # initialize Timestamps if they're not clicked yet
 
@@ -230,7 +221,7 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
     header = [html.H3(tab_string)]
     #header_barplot_2_2 = [html.H3(header_barplot_2_2_string)]
     
-### determine which button was clicked last by comparing timestamps
+    # determine which button was clicked last by comparing timestamps
     if Timestamp_Button_Prod<Timestamp_Button_Con:
         # list_1 = consumption
         tab_string = "Domestic electricity consumption (TWh)"
@@ -239,11 +230,11 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
 
     if Timestamp_Button_Prod >= Timestamp_Button_Con:
         # list_1 = production 
-        tab_string = "Domestic electricity production (TWh)"
+        tab_string = "Electricity production (TWh)"
         header_barplot_2_2_string += 'production '
         header = [html.H3(tab_string)]
         
-### Absolute or relative
+    # Absolute or relative
     if sort_button_value%2:
         the_column = f"{tab_string}_div_pop"
         button2_text = "Per 10000-Capita"
@@ -251,7 +242,7 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
         button2_text = "Absolute"
         the_column = tab_string
 
-     # Largst / Smallest Button
+    # Largest / Smallest Button
     if sort_button2_value%2:
         dfff=dff.nsmallest(10, [the_column]).sort_values(the_column, ascending=False)
         
@@ -276,7 +267,7 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
         animation_frame = dff.Year,
         animation_group = dff.iso_a3,
 
-        hover_name='Country', # here maybe Country
+        hover_name='Country',
         hover_data={'Country': True, the_column: True,"iso_a3":False},
         mapbox_style='light',
         zoom=1.01,
@@ -293,7 +284,6 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
          }
          )
     fig.update_coloraxes(colorbar_xanchor="left",   
-                            #colorbar_x= -0.01,
                             colorbar_title_side = "right",
                             colorbar_orientation = "v",
                             colorbar_ticks = "inside")
@@ -302,9 +292,7 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
 
 
 
- #horizontal barplot
- 
-
+    #horizontal barplot
     bar_hor = px.bar(dfff, 
                 x=the_column, 
                 y="Country", orientation='h',
@@ -313,11 +301,6 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
                 color_continuous_scale='Darkmint',
                 range_color=(round(dfff.iloc[9][the_column]), round(dfff.iloc[0][the_column])),
     )
-    # bar_hor.update_layout(coloraxis_colorbar={
-    #         'title':'Mtoe',
-    #         'tickvals':(0,round(dff.iloc[0]['Total energy production (Mtoe)'])),
-    #         #'ticktext':ticks        
-    #      })
     bar_hor.update_layout({
             "plot_bgcolor": "rgba(0, 0, 0, 0)",
             "paper_bgcolor": "rgba(0, 0, 0, 0)",
@@ -330,7 +313,7 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
 
 ########################################## Barchart ##############################################################################################
 
-        #bar plot 2 with total consumption values per continent
+    #bar plot 2 with total consumption values per continent
     dff1 = df.copy()
     dff1 = dff1[(dff1['Year'] >= value_bar[0]) & (dff1['Year'] <= value_bar[1])]
     dff1 = dff1[[tab_string, 'continent', 'Year']]
