@@ -110,9 +110,7 @@ layout = html.Div([
 
                 dbc.Row(
                     [
-                        dbc.Col(dbc.Card([dbc.CardHeader(html.H3(header_barplot_2_2_string),id='header_barplot_2_2', className="m-3 text-lg-center text-light",
-                            #"Total Electricity Production per continent"
-                            ), ## can we have here a html as well? Because then we can make it dynamic
+                        dbc.Col(dbc.Card([dbc.CardHeader(header_barplot_2_2_string, id='header_barplot_2_2'), ## can we have here a html as well? Because then we can make it dynamic
                                             html.Br(className="mb-6"),
                                             dcc.RangeSlider(id="interval_slider",
                                                             min=1990,
@@ -307,7 +305,7 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
 
     # list_1 = production
     tab_string = "Electricity production (TWh)"
-    header_barplot_2_2_string = "Total Electricity Production "
+    header_barplot_2_2_string = "Total electricity production "
 
     header = [html.H3(tab_string)]
     #header_barplot_2_2 = [html.H3(header_barplot_2_2_string)]
@@ -422,35 +420,35 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
                     name="Europe",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Europe'].groupby('Year')[tab_string].mean(),
-                    marker_color="#004687",
+                    marker_color="#d5f4e6",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Asia",
                     x= dff1.Year.unique(),
                     y=dff1.loc[df['continent'] == 'Asia'].groupby('Year')[tab_string].mean(),
-                    marker_color="#AE8F6F",
+                    marker_color="#618685",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Oceania",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Oceania'].groupby('Year')[tab_string].mean(),
-                    marker_color="#FF9912",
+                    marker_color="#80ced6",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Africa",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Africa'].groupby('Year')[tab_string].mean(),
-                    marker_color="#4D4D4D",
+                    marker_color="#fefbd8",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="North America",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'North America'].groupby('Year')[tab_string].mean(),
-                    marker_color="#EE2C2C",
+                    marker_color="#36486b",
                     opacity=0.8
                 )
             ]
@@ -476,12 +474,12 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
         cs_name = dff[dff.iso_a3 == location]["Country"].to_list()[0]
 
         figure1 = bar_plot_cs(df,value_bar,cs_name,tab_string)
-        header_barplot_2_2_string = 'Total Electricity Production of ' + cs_name
-        header_barplot_2_2 = [html.H3(header_barplot_2_2_string)] 
+        header_barplot_2_2_string = 'Total electricity production of ' + cs_name
+        header_barplot_2_2 = [html.P(header_barplot_2_2_string)] 
         
         return header, button_text , button2_text, fig, bar_hor, figure1, header_barplot_2_2, None 
     else:
         # fig2 =  fig2
-        header_barplot_2_2_string = 'Total Electricity Production per Continent'
-        header_barplot_2_2 = [html.H3(header_barplot_2_2_string)] 
+        header_barplot_2_2_string = 'Total electricity production per continent'
+        header_barplot_2_2 = [html.P(header_barplot_2_2_string)] 
         return header, button_text , button2_text, fig, bar_hor, fig2, header_barplot_2_2, None 
