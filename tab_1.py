@@ -513,8 +513,9 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
                 yanchor="bottom",
                 y=-0.2,
                 xanchor="left",
-                x=0.3
-))
+                x=0.3),
+            yaxis=dict(title="TWh")
+            )
     if c_selection is not None:
         
         location = c_selection['points'][0]['location']
