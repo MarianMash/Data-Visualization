@@ -29,7 +29,7 @@ layout = html.Div([
         [
             html.Div(html.H3("Comparison of total energy production and consumption"), className="m-3 text-lg-center text-light"),
             dbc.Col([
-                html.Div(html.P("""Some description"""), className="m-3 text-lg text-light")
+                html.Div(html.P("The total energy production and consumption are shown in a dispersion graph to compare the level of these two indices over the years for each country or alternatively for the selected ones. It is possible to compare them on different axes scales and to set the size of the points proportional to the country's GDP, population or area. Besides it a more detailed analysis is presented selected countries"), className="m-3 text-lg text-light")
             ],width={'size':8, 'offset':2})
         ]
     ),
