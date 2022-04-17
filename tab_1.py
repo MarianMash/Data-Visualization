@@ -9,21 +9,19 @@ import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 import plotly.io as pio
 
-
 #pip install geojson
 import geojson
-
 
 # ---------------------------------------------------------------------------------##
 # Data import and cleaning
 
 df = pd.read_csv('Merged_Energy_Dataset.csv')
 
-        ### Consumption ###
+# Consumption
 tab_string = "Total consumption of Energy (Twh)"
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
-        ### Production ###
+# Production
 tab_string = "Total production of Energy (Twh)"
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
@@ -35,14 +33,16 @@ header_pieplot_2_string = "Total energy "
 with open("geojson11.geojson") as f:
     gj = geojson.load(f)
 
-### Lists for lower Graphs
+# Lists for lower Graphs
 consumption = ['Oil products domestic consumption (Mt)','Natural gas domestic consumption (bcm)',
-                'Coal and lignite domestic consumption (Mt)','Electricity domestic consumption (TWh)']
+                'Coal and lignite domestic consumption (Mt)','Domestic electricity consumption (TWh)']
+
+
 
 production = ['Refined oil products production (Mt)','Natural gas production (bcm)',
                 'Coal and lignite production (Mt)','Electricity production (TWh)']
             
-##### Some Functions #####
+##### Some Helper Functions #####
 def bar_plot_cs(df, value, location,tab_string):
     df_cs = df.copy()
     df_cs = df_cs[(df_cs['Year'] >= value[0]) & (df_cs['Year'] <= value[1])]
@@ -121,13 +121,10 @@ def pie_func(df,value_pie,cs_name,list_1):
 # Accesstoken for Mapbox-API
 plotly.express.set_mapbox_access_token("pk.eyJ1IjoibWFzaGF5ZWtoaTE4IiwiYSI6ImNsMXBkaXpveTE4eGIzY28yY2h2bDR0aWQifQ.4BeYsKCaxz8Mzg1A1C0LrA")
 
-
 # country list for dropdown 
 countries = []
 for country in df['Country'].unique():
     countries.append({'label':str(country),'value':country})
-
-
 
 # ---------------------------------------------------------------------------------
 # Layout of this tab
@@ -170,7 +167,6 @@ layout = html.Div([
                                 dcc.Slider(id='my_slider', min = 1990, max = 2020, step = 1, value=1990, 
                                             marks = {1990: '1990', 1995: '1995', 2000: '2000', 2005: '2005', 2010: '2010', 2015: '2015', 2020: '2020'},
                                             tooltip={"placement": "bottom", "always_visible": True},
-                                            #updatemode='drag'
                                             )
                         ],width=9)
                     ]
@@ -203,9 +199,7 @@ layout = html.Div([
         ),
 
     ########################### CONSUMPTION ######################x
-   # html.H3("Total consumption of Energy (Twh)"),
     html.P("To display the values of a specific country in the following plots, click on it in the map. To reset the statistics click on the following button"),
-    #html.Br(),
     html.A(html.Button(id = 'btnShowWorldT1', children = 'Show World', className="m-1 btn btn-light")),
     html.Div(
     [
@@ -241,9 +235,6 @@ layout = html.Div([
                                                         marks = None,
                                                         tooltip={"placement": "bottom", "always_visible": True},
                                                         updatemode='drag'),
-                                            #dcc.Dropdown(options= countries,
-                                            #            value='Portugal',
-                                            #            id='country_dropdown')
                                             ]),
                                     html.Br(className="mb-6"),
                                 dcc.Graph(id='circle_graph'),
@@ -265,7 +256,6 @@ layout = html.Div([
     Output(component_id='interval-component', component_property='disabled'),
     Output(component_id='buttonPlay', component_property='n_clicks'), 
     Output(component_id='buttonPause', component_property='n_clicks'),
-    #Output(component_id='msg-container', component_property='children')
     ],
     [Input(component_id='buttonPlay', component_property='n_clicks'),
     Input(component_id='buttonPause', component_property='n_clicks'),
@@ -275,17 +265,17 @@ layout = html.Div([
     ]
 )
 def enable_interval_update(buttonPlay, buttonPause, buttonReset, stepper, dragValue):
-    #msg = 'play: {}, pause: {}, reset: {}, stepper: {}, drag: {}'.format(buttonPlay, buttonPause, buttonReset, stepper, dragValue)
+    
     if not buttonPlay:
         buttonPlay = 0
     if not buttonPause:
         buttonPause = 0
 
     if buttonPlay > buttonPause:
-        return False, 1, 0#, msg 
+        return False, 1, 0
     
     else:
-        return True, 0, 0#, msg
+        return True, 0, 0
 
 
 @callback(
@@ -317,26 +307,20 @@ def on_click(n_intervals, buttonReset, dragValue):
     [
     Output(component_id ='world',component_property = 'figure'),
     Output(component_id ='bar_hor_1',component_property = 'figure'),
-    
     Output(component_id = 'sort_button', component_property = 'children'),
     Output(component_id = 'Normalized', component_property = 'children'),
-
     Output(component_id = 'circle_graph', component_property ='figure'),
-
     Output(component_id ='bar_chart_2', component_property ='figure'),
-
     Output(component_id = 'ticker_header', component_property = 'children'),
     Output(component_id='header_barplot_2', component_property='children'),
     Output(component_id='header_pieplot_2', component_property='children'),
     Output(component_id='btnShowWorldT1', component_property='n_clicks_timestamp'),
-
     ],
     [Input(component_id = 'my_slider', component_property = 'value'),
     Input(component_id = 'Normalized', component_property = 'n_clicks'),
     Input(component_id = 'sort_button', component_property = 'n_clicks'),
     Input(component_id = 'Production', component_property = 'n_clicks_timestamp'),
     Input(component_id = 'Consumption', component_property = 'n_clicks_timestamp'),
-    #Input(component_id ='country_dropdown', component_property = 'value'),
     Input(component_id ='simple_slider', component_property = 'value'),
     Input(component_id = 'range_slider', component_property = 'value'),
     Input(component_id = 'ticker_header', component_property = 'children'),
@@ -348,28 +332,21 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
     dff = df.copy()
     dff = dff[dff["Year"]==selected_year]
     
-########################################################################################################################################################
-    ############## 
-
-    # Normalize Button
-        # Production or Consumption
-    
     # initialize Timestamps if they're not clicked yet
-
     if Con_Time_Button is None:
         Con_Time_Button = 0
     if Prod_Time_Button is None:
         Prod_Time_Button = 0
 
-    list_1 = production
     # initialize generic strings 
+    list_1 = production
     tab_string = "Total production of Energy (Twh)"
     header_barplot_2_string = "Total energy "
     header_pieplot_2_string = "Total energy "
 
     header = [html.H3(tab_string)]
     
-### determine which button was clicked last by comparing timestamps
+    # determine which button was clicked last by comparing timestamps
     if Prod_Time_Button<Con_Time_Button:
         list_1 = consumption
         tab_string = "Total consumption of Energy (Twh)"
@@ -385,7 +362,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
         header_pieplot_2_string += 'production '
 
 
-### Absolute or relative
+    # Absolute or relative
     if sort_button_value%2:
         the_column = f"{tab_string}_div_pop"
         button2_text = "Per 10000-capita"
@@ -393,7 +370,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
         button2_text = "Absolute"
         the_column = tab_string
 
-     # Largst / Smallest Button
+     # Largest / Smallest Button
     if sort_button2_value%2:
         dfff=dff.nsmallest(10, [the_column]).sort_values(the_column, ascending=False)
         
@@ -418,7 +395,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
         animation_frame = dff.Year,
         animation_group = dff.iso_a3,
 
-        hover_name='Country', # here maybe Country
+        hover_name='Country', 
         hover_data={'Country': True, the_column: True,"iso_a3":False},
         mapbox_style='light',
         zoom=1.01,
@@ -438,7 +415,6 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
          }
          )
     fig.update_coloraxes(colorbar_xanchor="left",   
-                            #colorbar_x= -0.01,
                             colorbar_title_side = "right",
                             colorbar_orientation = "v",
                             colorbar_ticks = "inside")
@@ -451,8 +427,6 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
 
 
     #horizontal barplot
- 
-
     bar_hor = px.bar(dfff, 
                 x=the_column, 
                 y="Country", orientation='h',
@@ -461,27 +435,18 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
                 color_continuous_scale='Darkmint',
                 range_color=(round(dfff.iloc[9][the_column]), round(dfff.iloc[0][the_column])),
     )
-    # bar_hor.update_layout(coloraxis_colorbar={
-    #         'title':'Mtoe',
-    #         'tickvals':(0,round(dff.iloc[0]["Total production of Energy (Twh)"])),
-    #         #'ticktext':ticks        
-    #      })
     bar_hor.update_layout({
             "plot_bgcolor": "rgba(0, 0, 0, 0)",
             "paper_bgcolor": "rgba(0, 0, 0, 0)",
             },margin={'r':0,'t':0,'l':15,'b':0})
-    bar_hor.update_traces(text=list(dfff.Country), textposition='inside')# ,textfont_color='White')
+    bar_hor.update_traces(text=list(dfff.Country), textposition='inside')
     bar_hor.update_yaxes(visible=False, showticklabels=False)
     bar_hor.update_xaxes(visible=False, showticklabels=False)
-    bar_hor.update(layout_coloraxis_showscale=False)
-
-    
-     ########################################################################################################################################
-   
+    bar_hor.update(layout_coloraxis_showscale=False)   
 
     ########################################## Barchart ##############################################################################################
 
-        #bar plot 2 with total consumption values per continent
+    #bar plot 2 with total consumption values per continent
     dff1 = df.copy()
     dff1 = dff1[(dff1['Year'] >= value_bar[0]) & (dff1['Year'] <= value_bar[1])]
     dff1 = dff1[[tab_string, 'continent', 'Year']]
@@ -573,11 +538,4 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
         header_pieplot_2 = [html.P(header_pieplot_2_string)] 
 
         return fig, bar_hor, button_text , button2_text, piechart, fig2 , header, header_barplot_2, header_pieplot_2, None
-
-
-#circle graph of total consumption of all features by country
-
-    ######################### COPMARISON GRAPHS #####################
-
-
 
