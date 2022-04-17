@@ -103,7 +103,6 @@ layout = html.Div([
     html.A(html.Button(id = 'btnShowWorld', children = 'Show World', className="m-1 btn btn-light")),
     html.Div(
             [
-
                 dbc.Row(
                     [
                         dbc.Col(dbc.Card([dbc.CardHeader(header_barplot_2_2_string, id='header_barplot_2_2'), 
