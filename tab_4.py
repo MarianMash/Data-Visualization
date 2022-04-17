@@ -22,6 +22,8 @@ tab_string = "Share of electricity in total final energy consumption (%)"
         ### Production ###
 tab_string = "Share of renewables in electricity production (%)"
 
+description_string = """"Share of electricity in total final energy consumption is the ratio between the electricity 
+                                consumption and the total energy consumed for commercial purposes"""
 
 with open("geojson11.geojson") as f:
     gj = geojson.load(f)
@@ -146,7 +148,7 @@ layout = html.Div([
                 dbc.Row(
                     [
                         html.Div(html.H3(tab_string), id='Header_RN',  className="m-3 text-lg-center text-light"),
-                        html.Div(html.P("Some text explaining what Share of energies is. Maybe it should be a description that changes at the click of the buttons Share of renewables and Share of electricity"), className="m-3 text-lg-center text-light")
+                        html.Div(html.P(description_string), id='Second_Header_RN', className="m-3 text-lg-center text-light")
                     ]
                 ),
                 #Buttons and slider
@@ -372,6 +374,7 @@ def on_click(n_intervals, buttonReset, dragValue):
 
 @callback(
     Output(component_id='Header_RN', component_property='children'),
+    Output(component_id='Second_Header_RN', component_property='children'),
 
     Output(component_id = 'EL_sort_button', component_property = 'children'),
     Output(component_id ='EL_world_plot',component_property = 'figure'),
@@ -411,19 +414,26 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_but
     # list_1 = production
     tab_string = 'Share of electricity in total final energy consumption (%)'
     header = [html.H3(tab_string)]
-    
+    description_string = """Share of electricity in total final energy consumption is the ratio between the 
+                            electricity consumption and the total energy consumed for commercial purposes."""
+    second_header = [html.P(description_string)]
+
 ### determine which button was clicked last by comparing timestamps
     if Share_of_Renewables<Share_of_Electricity:
         # list_1 = consumption
         tab_string = 'Share of electricity in total final energy consumption (%)'
         header = [html.H3(tab_string)]
+        description_string = """Share of electricity in total final energy consumption is the ratio between the 
+                                electricity consumption and the total energy consumed for commercial purposes."""
+        second_header = [html.P(description_string)]
 
     if Share_of_Renewables > Share_of_Electricity:
         # list_1 = production 
         tab_string = "Share of renewables in electricity production (%)"
-    
         header = [html.H3(tab_string)]
-        
+        description_string = """Share of wind and solar in electricity production as the name suggests represents the percentage 
+                            of electricity produced from wind and solar energy over the total electricity production."""
+        second_header = [html.P(description_string)]
 
      # Largst / Smallest Button
     if sort_button2_value%2:
@@ -569,9 +579,9 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_but
         pie = Pie_chart(df, value_pie,tab_string,cs_name)
 
         
-        return header, button_text , fig, bar_hor, figure1 , pie
+        return header,second_header, button_text , fig, bar_hor, figure1 , pie
     else:
         fig2 =  Continent_comp(df, tab_string,value_bar)
         pie = Pie_chart(df, value_pie,tab_string)
 
-        return header, button_text , fig, bar_hor, fig2 , pie
+        return header,second_header, button_text , fig, bar_hor, fig2 , pie
