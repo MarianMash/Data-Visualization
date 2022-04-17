@@ -40,35 +40,35 @@ def Continent_comp(df, tabstring,value):
                 name="Europe",
                 x= dff.Year.unique(),
                 y= dff.loc[dff['continent'] == 'Europe'].groupby('Year')[tabstring].mean(),
-                marker_color="#004687",
+                marker_color="#d5f4e6",
                 opacity=0.8,
             ),
             go.Bar(
                 name="Asia",
                 x= dff.Year.unique(),
                 y=dff.loc[dff['continent'] == 'Asia'].groupby('Year')[tabstring].mean(),
-                marker_color="#AE8F6F",
+                marker_color="#618685",
                 opacity=0.8,
             ),
             go.Bar(
                 name="Oceania",
                 x= dff.Year.unique(),
                 y= dff.loc[dff['continent'] == 'Oceania'].groupby('Year')[tabstring].mean(),
-                marker_color="#FF9912",
+                marker_color="#80ced6",
                 opacity=0.8,
             ),
             go.Bar(
                 name="Africa",
                 x= dff.Year.unique(),
                 y= dff.loc[dff['continent'] == 'Africa'].groupby('Year')[tabstring].mean(),
-                marker_color="#4D4D4D",
+                marker_color="#fefbd8",
                 opacity=0.8,
             ),
             go.Bar(
                 name="North America",
                 x= dff.Year.unique(),
                 y= dff.loc[dff['continent'] == 'North America'].groupby('Year')[tabstring].mean(),
-                marker_color="#EE2C2C",
+                marker_color="#36486b",
                 opacity=0.8
             )]
             )
@@ -120,7 +120,7 @@ def Pie_chart(df1, selected_year,tab_string,cs_name = None):
                 values = the_dict["Values"],
                 names= the_dict["Names"],
                 hole=0.8,
-            color_discrete_sequence = px.colors.qualitative.Antique)
+            color_discrete_sequence = px.colors.qualitative.Prism)
     piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
             "paper_bgcolor": "rgba(0, 0, 0, 0)",
             },margin={'r':10,'t':0,'l':0,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.40))
@@ -198,7 +198,7 @@ layout = html.Div([
 
                         dbc.Row(
                             [
-                                dbc.Col(dbc.Card([dbc.CardHeader("Shares of Renewable Energy per continent"), ## can we have here a html as well? Because then we can make it dynamic
+                                dbc.Col(dbc.Card([dbc.CardHeader("Shares of renewable energy per continent"), ## can we have here a html as well? Because then we can make it dynamic
                                                     html.Br(className="mb-6"),
                                                     dcc.RangeSlider(id="EL_interval_slider",
                                                                     min=1990,
@@ -213,7 +213,7 @@ layout = html.Div([
                                                 dcc.Graph(id='EL_bar_plot_2_2'),
                                                 html.Br(className="mb-6")],
                                                 color="secondary", inverse=True),width=8),
-                                dbc.Col(dbc.Card([dbc.CardHeader("Total Shares of Renewable Energy"),
+                                dbc.Col(dbc.Card([dbc.CardHeader("Total shares of renewable energy"),
                                                     html.Br(className="mb-6"),
                                                     dbc.Row([dcc.Slider(id='simple_slider_2_4',
                                                                         min = 1990, 
@@ -524,35 +524,35 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_but
                     name="Europe",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Europe'].groupby('Year')[tab_string].mean(),
-                    marker_color="#004687",
+                    marker_color="#d5f4e6",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Asia",
                     x= dff1.Year.unique(),
                     y=dff1.loc[df['continent'] == 'Asia'].groupby('Year')[tab_string].mean(),
-                    marker_color="#AE8F6F",
+                    marker_color="#618685",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Oceania",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Oceania'].groupby('Year')[tab_string].mean(),
-                    marker_color="#FF9912",
+                    marker_color="#80ced6",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Africa",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Africa'].groupby('Year')[tab_string].mean(),
-                    marker_color="#4D4D4D",
+                    marker_color="#fefbd8",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="North America",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'North America'].groupby('Year')[tab_string].mean(),
-                    marker_color="#EE2C2C",
+                    marker_color="#36486b",
                     opacity=0.8
                 )
             ]
