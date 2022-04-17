@@ -458,8 +458,8 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
                 yanchor="bottom",
                 y=-0.2,
                 xanchor="left",
-                x=0.3
-    ))
+                x=0.3),
+            yaxis=dict(title="TWh"))
 
     if c_selection is not None:
         
