@@ -51,7 +51,8 @@ layout = html.Div([
                 dbc.Row(
                     [
                         html.Div(html.H3(tab_string),id='Header_elec', className="m-3 text-lg-center text-light"),
-                        html.Div(html.P("Some text explaining what Total electricity is. Maybe it should be a description that changes at the click of the buttons Production and Consumption"), className="m-3 text-lg-center text-light")
+                        html.Div(html.P("""Electricity production is the sum of the electrical energy production by all the generating units concerned,
+                                        while the electricity consumption represents the amount of electrical energy demanded from the existing electricity supply for every day to day purposes."""), className="m-3 text-lg-center text-light")
                     ]
                 ),
                 #Buttons and slider
