@@ -202,7 +202,7 @@ layout = html.Div([
 
         dbc.Row(
             [
-                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per continent (Mtoe)"), ## can we have here a html as well? Because then we can make it dynamic
+                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per continent (TWh)"), ## can we have here a html as well? Because then we can make it dynamic
                                     html.Br(className="mb-6"),
                                     dcc.RangeSlider(id="range_slider",
                                                     min=1990,
