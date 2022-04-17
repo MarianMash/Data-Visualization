@@ -100,8 +100,8 @@ layout = html.Div([
                 ),
             ]
         ),
-
-    html.Br(),
+    html.P("To display the values of a specific country in the following plot, click on it in the map. To reset the statistics click on the following button"),
+    #html.Br(),
     html.A(html.Button('Show World', className="m-1 btn btn-light"),href='/'),
     html.Div(
             [

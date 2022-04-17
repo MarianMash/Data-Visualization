@@ -196,8 +196,8 @@ layout = html.Div([
 
     ########################### CONSUMPTION ######################x
    # html.H3("Total consumption of Energy (Twh)"),
-
-    html.Br(),
+    html.P("To display the values of a specific country in the following plots, click on it in the map. To reset the statistics click on the following button"),
+    #html.Br(),
     html.A(html.Button('Show World', className="m-1 btn btn-light"),href='/'),
     html.Div(
     [
@@ -471,35 +471,35 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
                     name="Europe",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Europe'].groupby('Year')[tab_string].mean(),
-                    marker_color="#004687",
+                    marker_color="#d5f4e6",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Asia",
                     x= dff1.Year.unique(),
                     y=dff1.loc[df['continent'] == 'Asia'].groupby('Year')[tab_string].mean(),
-                    marker_color="#AE8F6F",
+                    marker_color="#618685",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Oceania",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Oceania'].groupby('Year')[tab_string].mean(),
-                    marker_color="#FF9912",
+                    marker_color="#80ced6",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Africa",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Africa'].groupby('Year')[tab_string].mean(),
-                    marker_color="#4D4D4D",
+                    marker_color="#fefbd8",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="North America",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'North America'].groupby('Year')[tab_string].mean(),
-                    marker_color="#EE2C2C",
+                    marker_color="#36486b",
                     opacity=0.8
                 )
             ]

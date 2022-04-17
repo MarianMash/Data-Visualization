@@ -188,7 +188,8 @@ layout = html.Div([
                                         color="secondary", inverse=True),width=8),
                     ]
                 ),
-
+                html.P("To display the values of a specific country in the following plots, click on it in the map. To reset the statistics click on the following button"),
+    
                 html.Br(className="mb-6"),
                 #button and slider
                 html.Div([
