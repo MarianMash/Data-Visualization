@@ -556,8 +556,8 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_but
                 yanchor="bottom",
                 y=-0.2,
                 xanchor="left",
-                x=0.3
-    ))
+                x=0.3),
+            yaxis=dict(title="%"))
 
     if c_selection is not None:
         
