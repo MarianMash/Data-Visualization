@@ -144,10 +144,12 @@ layout = html.Div([
                 #Title 
                 dbc.Row(
                     [
-                        html.Div(html.H3(tab_string),id='ticker_header', className="m-3 text-lg-center text-light"),
-                        html.Div(html.P("""How much energy do countries across the world consume?
+                        html.Div(html.H3(tab_string),id='ticker_header', className="mx-3 text-lg-center text-light"),
+                        dbc.Col([
+                            html.Div(html.P("""How much energy do countries across the world consume?
                                         The interactive visualizations show total primary energy production/consumption country by country. It is the sum of all energy sources, including coal, natural gas, crude oil, electricity, and renewable energies.
-                                        kWh is a unit of energy equal to one kilowatt of power sustained for one hour, but in this case the measure is 10^9 times a kilowatt."""), className="m-5 text-lg-center text-light")
+                                        kWh is a unit of energy equal to one kilowatt of power sustained for one hour, but in this case the measure is 10^9 times a kilowatt."""), className="m-3 text-lg text-light")
+                        ],width={'size':8, 'offset':2})
                     ]
                 ),
                 #Buttons and slider
