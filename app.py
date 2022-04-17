@@ -30,8 +30,8 @@ tab3 = tab_3.layout
 tab4 = tab_4.layout
 
 app.layout = html.Div([
-    html.H1("Global energy statistics - DV project", className="m-3 text-xl-center text-light"),
-    html.H3("Analysis of countries energy indicators", className="m-3 text-xl-center"),
+    html.H1("Global energy statistics", className="m-3 text-xl-center text-light"),
+    html.H3("Analysis of countries' energy indicators", className="m-3 text-xl-center"),
     # dcc.Tabs(id="tabs-example", value='tab-1-example', children=[
     #     dcc.Tab(id="tab-1", label='Tab One', value='tab-1-example'),
     #     dcc.Tab(id="tab-2", label='Tab Two', value='tab-2-example'),
@@ -40,8 +40,8 @@ app.layout = html.Div([
     # ]),
     dbc.Tabs(
             [
-                dbc.Tab(tab_id='tab-1-example', label="Total Energy"),
-                dbc.Tab(tab_id='tab-2-example', label="Energy Comparison"),
+                dbc.Tab(tab_id='tab-1-example', label="Total energy"),
+                dbc.Tab(tab_id='tab-2-example', label="Energy comparison"),
                 dbc.Tab(tab_id='tab-3-example', label="Electricity"),
                 dbc.Tab(tab_id='tab-4-example', label="Renewables")
             ],
