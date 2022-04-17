@@ -95,8 +95,8 @@ def Pie_chart(df1, selected_year,tab_string,cs_name = None):
         pass
     
     if tab_string == "Share of electricity in total final energy consumption (%)":
-        share_wind = df_cop["Wind (TWh – sub method)"].sum()/df_cop["Electricity domestic consumption (TWh)"].sum()
-        share_solar = df_cop["Solar (TWh – sub method)"].sum()/df_cop["Electricity domestic consumption (TWh)"].sum()
+        share_wind = df_cop["Wind (TWh – sub method)"].sum()/df_cop["Domestic electricity consumption (TWh)"].sum()
+        share_solar = df_cop["Solar (TWh – sub method)"].sum()/df_cop["Domestic electricity consumption (TWh)"].sum()
         share_other = 1-share_wind-share_solar
 
 
@@ -408,13 +408,13 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_but
         Share_of_Electricity= 0
 
     # list_1 = production
-    tab_string = "Share of electricity in total final energy consumption (%)"
+    tab_string = 'Share of electricity in total final energy consumption (%)'
     header = [html.H3(tab_string)]
     
 ### determine which button was clicked last by comparing timestamps
     if Share_of_Renewables<Share_of_Electricity:
         # list_1 = consumption
-        tab_string = "Share of electricity in total final energy consumption (%)"
+        tab_string = 'Share of electricity in total final energy consumption (%)'
         header = [html.H3(tab_string)]
 
     if Share_of_Renewables > Share_of_Electricity:
