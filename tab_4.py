@@ -22,6 +22,8 @@ tab_string = "Share of electricity in total final energy consumption (%)"
         ### Production ###
 tab_string = "Share of renewables in electricity production (%)"
 
+description_string = """"Share of electricity in total final energy consumption is the ratio between the electricity 
+                                consumption and the total energy consumed for commercial purposes"""
 
 with open("geojson11.geojson") as f:
     gj = geojson.load(f)
@@ -38,35 +40,35 @@ def Continent_comp(df, tabstring,value):
                 name="Europe",
                 x= dff.Year.unique(),
                 y= dff.loc[dff['continent'] == 'Europe'].groupby('Year')[tabstring].mean(),
-                marker_color="#004687",
+                marker_color="#d5f4e6",
                 opacity=0.8,
             ),
             go.Bar(
                 name="Asia",
                 x= dff.Year.unique(),
                 y=dff.loc[dff['continent'] == 'Asia'].groupby('Year')[tabstring].mean(),
-                marker_color="#AE8F6F",
+                marker_color="#618685",
                 opacity=0.8,
             ),
             go.Bar(
                 name="Oceania",
                 x= dff.Year.unique(),
                 y= dff.loc[dff['continent'] == 'Oceania'].groupby('Year')[tabstring].mean(),
-                marker_color="#FF9912",
+                marker_color="#80ced6",
                 opacity=0.8,
             ),
             go.Bar(
                 name="Africa",
                 x= dff.Year.unique(),
                 y= dff.loc[dff['continent'] == 'Africa'].groupby('Year')[tabstring].mean(),
-                marker_color="#4D4D4D",
+                marker_color="#fefbd8",
                 opacity=0.8,
             ),
             go.Bar(
                 name="North America",
                 x= dff.Year.unique(),
                 y= dff.loc[dff['continent'] == 'North America'].groupby('Year')[tabstring].mean(),
-                marker_color="#EE2C2C",
+                marker_color="#36486b",
                 opacity=0.8
             )]
             )
@@ -118,7 +120,7 @@ def Pie_chart(df1, selected_year,tab_string,cs_name = None):
                 values = the_dict["Values"],
                 names= the_dict["Names"],
                 hole=0.8,
-            color_discrete_sequence = px.colors.qualitative.Antique)
+            color_discrete_sequence = px.colors.qualitative.Prism)
     piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
             "paper_bgcolor": "rgba(0, 0, 0, 0)",
             },margin={'r':10,'t':0,'l':0,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.40))
@@ -146,7 +148,7 @@ layout = html.Div([
                 dbc.Row(
                     [
                         html.Div(html.H3(tab_string), id='Header_RN',  className="m-3 text-lg-center text-light"),
-                        html.Div(html.P("Some text explaining what Share of energies is. Maybe it should be a description that changes at the click of the buttons Share of renewables and Share of electricity"), className="m-3 text-lg-center text-light")
+                        html.Div(html.P(description_string), id='Second_Header_RN', className="m-3 text-lg-center text-light")
                     ]
                 ),
                 #Buttons and slider
@@ -196,7 +198,7 @@ layout = html.Div([
 
                         dbc.Row(
                             [
-                                dbc.Col(dbc.Card([dbc.CardHeader("Shares of Renewable Energy per continent"), ## can we have here a html as well? Because then we can make it dynamic
+                                dbc.Col(dbc.Card([dbc.CardHeader("Shares of renewable energy per continent"), ## can we have here a html as well? Because then we can make it dynamic
                                                     html.Br(className="mb-6"),
                                                     dcc.RangeSlider(id="EL_interval_slider",
                                                                     min=1990,
@@ -211,7 +213,7 @@ layout = html.Div([
                                                 dcc.Graph(id='EL_bar_plot_2_2'),
                                                 html.Br(className="mb-6")],
                                                 color="secondary", inverse=True),width=8),
-                                dbc.Col(dbc.Card([dbc.CardHeader("Total Shares of Renewable Energy"),
+                                dbc.Col(dbc.Card([dbc.CardHeader("Total shares of renewable energy"),
                                                     html.Br(className="mb-6"),
                                                     dbc.Row([dcc.Slider(id='simple_slider_2_4',
                                                                         min = 1990, 
@@ -372,6 +374,7 @@ def on_click(n_intervals, buttonReset, dragValue):
 
 @callback(
     Output(component_id='Header_RN', component_property='children'),
+    Output(component_id='Second_Header_RN', component_property='children'),
 
     Output(component_id = 'EL_sort_button', component_property = 'children'),
     Output(component_id ='EL_world_plot',component_property = 'figure'),
@@ -411,19 +414,26 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_but
     # list_1 = production
     tab_string = 'Share of electricity in total final energy consumption (%)'
     header = [html.H3(tab_string)]
-    
+    description_string = """Share of electricity in total final energy consumption is the ratio between the 
+                            electricity consumption and the total energy consumed for commercial purposes."""
+    second_header = [html.P(description_string)]
+
 ### determine which button was clicked last by comparing timestamps
     if Share_of_Renewables<Share_of_Electricity:
         # list_1 = consumption
         tab_string = 'Share of electricity in total final energy consumption (%)'
         header = [html.H3(tab_string)]
+        description_string = """Share of electricity in total final energy consumption is the ratio between the 
+                                electricity consumption and the total energy consumed for commercial purposes."""
+        second_header = [html.P(description_string)]
 
     if Share_of_Renewables > Share_of_Electricity:
         # list_1 = production 
         tab_string = "Share of renewables in electricity production (%)"
-    
         header = [html.H3(tab_string)]
-        
+        description_string = """Share of wind and solar in electricity production as the name suggests represents the percentage 
+                            of electricity produced from wind and solar energy over the total electricity production."""
+        second_header = [html.P(description_string)]
 
      # Largst / Smallest Button
     if sort_button2_value%2:
@@ -514,35 +524,35 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_but
                     name="Europe",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Europe'].groupby('Year')[tab_string].mean(),
-                    marker_color="#004687",
+                    marker_color="#d5f4e6",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Asia",
                     x= dff1.Year.unique(),
                     y=dff1.loc[df['continent'] == 'Asia'].groupby('Year')[tab_string].mean(),
-                    marker_color="#AE8F6F",
+                    marker_color="#618685",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Oceania",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Oceania'].groupby('Year')[tab_string].mean(),
-                    marker_color="#FF9912",
+                    marker_color="#80ced6",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="Africa",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'Africa'].groupby('Year')[tab_string].mean(),
-                    marker_color="#4D4D4D",
+                    marker_color="#fefbd8",
                     opacity=0.8,
                 ),
                 go.Bar(
                     name="North America",
                     x= dff1.Year.unique(),
                     y= dff1.loc[df['continent'] == 'North America'].groupby('Year')[tab_string].mean(),
-                    marker_color="#EE2C2C",
+                    marker_color="#36486b",
                     opacity=0.8
                 )
             ]
@@ -569,9 +579,9 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_but
         pie = Pie_chart(df, value_pie,tab_string,cs_name)
 
         
-        return header, button_text , fig, bar_hor, figure1 , pie
+        return header,second_header, button_text , fig, bar_hor, figure1 , pie
     else:
         fig2 =  Continent_comp(df, tab_string,value_bar)
         pie = Pie_chart(df, value_pie,tab_string)
 
-        return header, button_text , fig, bar_hor, fig2 , pie
+        return header,second_header, button_text , fig, bar_hor, fig2 , pie
