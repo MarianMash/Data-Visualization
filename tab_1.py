@@ -92,7 +92,7 @@ def pie_func(df,value_pie,cs_name,list_1):
                 values = dff3.values.tolist(),
                 names= list(labels_dict.values()),
                 hole=.8,
-            color_discrete_sequence = px.colors.qualitative.Antique)
+            color_discrete_sequence = px.colors.qualitative.Prism)
         piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
                 "paper_bgcolor": "rgba(0, 0, 0, 0)"},
                 margin={'r':10,'t':0,'l':0,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.40))
@@ -106,7 +106,7 @@ def pie_func(df,value_pie,cs_name,list_1):
                     values = dff2.values.tolist()[0],
                     names= list(labels_dict.values()),
                     hole=.8,
-                color_discrete_sequence = px.colors.qualitative.Antique)
+                color_discrete_sequence = px.colors.qualitative.Prism)
         piechart.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)",
                 "paper_bgcolor": "rgba(0, 0, 0, 0)",
                 },margin={'r':10,'t':0,'l':0,'b':0},legend=dict(yanchor="top", y=0.6, xanchor="left", x=0.40))
@@ -204,7 +204,7 @@ layout = html.Div([
 
         dbc.Row(
             [
-                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per continent (TWh)"), ## can we have here a html as well? Because then we can make it dynamic
+                dbc.Col(dbc.Card([dbc.CardHeader("Total energy production per continent (TWh)"), ## can we have here a html as well? Because then we can make it dynamic
                                     html.Br(className="mb-6"),
                                     dcc.RangeSlider(id="range_slider",
                                                     min=1990,
@@ -219,7 +219,7 @@ layout = html.Div([
                                 dcc.Graph(id='bar_chart_2'),
                                 html.Br(className="mb-6")],
                                 color="secondary", inverse=True),width=8),
-                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per Country and energy type"),
+                dbc.Col(dbc.Card([dbc.CardHeader("Total energy production per country and energy type"),
                                     html.Br(className="mb-6"),
                                     dbc.Row([dcc.Slider(id='simple_slider',
                                                         min = 1990, 
@@ -367,7 +367,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
 ### Absolute or relative
     if sort_button_value%2:
         the_column = f"{tab_string}_div_pop"
-        button2_text = "Per 10000-Capita"
+        button2_text = "Per 10000-capita"
     else: 
         button2_text = "Absolute"
         the_column = tab_string

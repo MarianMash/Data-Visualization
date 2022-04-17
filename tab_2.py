@@ -32,7 +32,7 @@ layout = html.Div([
     #Title 
     dbc.Row(
         [
-            html.Div(html.H3("Comparison of Total Energy Production and Consumption"), className="m-3 text-lg-center text-light"),
+            html.Div(html.H3("Comparison of total energy production and consumption"), className="m-3 text-lg-center text-light"),
             html.Div(html.P("""Some description"""), className="m-3 text-lg-center text-light")
         ]
     ),
@@ -94,12 +94,12 @@ layout = html.Div([
     #Scatterplot and bar chart
     dbc.Row(
         [
-            dbc.Col(dbc.Card([dbc.CardHeader("Scatterplot of Total Energy Production and Consumption of countries "),
+            dbc.Col(dbc.Card([dbc.CardHeader("Scatterplot of total energy production and consumption of countries "),
                             html.Br(className="mb-6"),
                             dcc.Graph(id='electricity_graph'),
                             html.Br(className="mb-6")],
                             color="secondary", inverse=True),width=8),
-            dbc.Col(dbc.Card([dbc.CardHeader("Production and Consumption for selected countries"),
+            dbc.Col(dbc.Card([dbc.CardHeader("Production and consumption for selected countries"),
                             html.Br(className="mb-6"),
                             dcc.Graph(id='electricity_bar'),
                             html.Br(className="mb-6")],
