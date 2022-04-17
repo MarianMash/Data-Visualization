@@ -14,14 +14,14 @@ import geojson
 # ---------------------------------------------------------------------------------##
 # Data import and cleaning
 
-df = pd.read_csv('ActualDataset.csv')
+df = pd.read_csv('Merged_Energy_Dataset.csv')
 
         ### Consumption ###
 tab_string = "Electricity production (TWh)"
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
         ### Production ###
-tab_string = "Electricity domestic consumption (TWh)"
+tab_string = "Domestic electricity consumption (TWh)"
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
 
@@ -308,7 +308,7 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
 ### determine which button was clicked last by comparing timestamps
     if Timestamp_Button_Prod<Timestamp_Button_Con:
         # list_1 = consumption
-        tab_string = "Electricity domestic consumption (TWh)"
+        tab_string = "Domestic electricity consumption (TWh)"
         header = [html.H3(tab_string)]
 
     if Timestamp_Button_Prod > Timestamp_Button_Con:
