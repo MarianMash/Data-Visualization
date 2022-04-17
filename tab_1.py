@@ -66,7 +66,9 @@ def bar_plot_cs(df, value, location,tab_string):
                 yanchor="bottom",
                 y=-0.2,
                 xanchor="left",
-                x=0.3))
+                x=0.3),
+            yaxis=dict(title="TWh")
+            )
     return fig_cs
 
 def pie_func(df,value_pie,cs_name,list_1): 
