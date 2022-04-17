@@ -216,7 +216,7 @@ layout = html.Div([
                                                                         min = 1990, 
                                                                         max = 2020, 
                                                                         step = 1, 
-                                                                        value=1990,  
+                                                                        value=2020,  
                                                                         marks = None,
                                                                         tooltip={"placement": "bottom", "always_visible": True},
                                                                         updatemode='drag'),
@@ -471,7 +471,7 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_but
                             colorbar_orientation = "v",
                             colorbar_ticks = "inside")
 
-    fig.update(layout_showlegend=False)
+    fig.update(layout_showlegend=False,layout_coloraxis_showscale = False)
 
 
  #horizontal barplot
