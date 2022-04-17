@@ -372,7 +372,8 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
                             colorbar_orientation = "v",
                             colorbar_ticks = "inside")
 
-    fig.update(layout_showlegend=False)
+    fig.update(layout_showlegend=False,layout_coloraxis_showscale = False)
+
 
 
  #horizontal barplot

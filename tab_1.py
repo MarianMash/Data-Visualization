@@ -58,6 +58,16 @@ def bar_plot_cs(df, value, location,tab_string):
                 ),
             ]
     )
+    fig_cs.update_layout({
+            "plot_bgcolor": "rgba(0, 0, 0, 0)",
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            },margin={'r':0,'t':0,'l':10,'b':0},barmode="stack",
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-0.2,
+                xanchor="left",
+                x=0.3))
     return fig_cs
 
 def pie_func(df,value_pie,cs_name,list_1): 
@@ -193,7 +203,7 @@ layout = html.Div([
 
         dbc.Row(
             [
-                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per continent"), ## can we have here a html as well? Because then we can make it dynamic
+                dbc.Col(dbc.Card([dbc.CardHeader("Total Energy Production per continent (Mtoe)"), ## can we have here a html as well? Because then we can make it dynamic
                                     html.Br(className="mb-6"),
                                     dcc.RangeSlider(id="range_slider",
                                                     min=1990,
@@ -411,7 +421,10 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
                             colorbar_orientation = "v",
                             colorbar_ticks = "inside")
 
-    fig.update(layout_showlegend=False)
+
+
+
+    fig.update(layout_showlegend=False,layout_coloraxis_showscale = False)
 
 
 
