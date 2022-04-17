@@ -65,7 +65,7 @@ layout = html.Div([
                     html.Button(id='buttonDefault', children='Default', n_clicks_timestamp=0, className="m-1 btn btn-light"),
                     html.Button(id='buttonGDP', children='GDP', n_clicks_timestamp=0, className="m-1 btn btn-light"),
                     html.Button(id='buttonPopulation', children='Population', n_clicks_timestamp=0, className="m-1 btn btn-light"),
-                    html.Button(id='buttonArea', children='Area', n_clicks_timestamp=0, className="m-1 btn btn-light")
+                    #html.Button(id='buttonArea', children='Area', n_clicks_timestamp=0, className="m-1 btn btn-light")
             ], width=5),
             dbc.Col([
                     dcc.RadioItems(
@@ -159,11 +159,9 @@ def on_click_comparison(n_intervals, buttonReset, dragValue):
     Input('buttonShowSelectedOnly', 'n_clicks'),
     Input('buttonDefault', 'n_clicks_timestamp'),
     Input('buttonGDP', 'n_clicks_timestamp'),
-    Input('buttonPopulation', 'n_clicks_timestamp'),
-    Input('buttonArea', 'n_clicks_timestamp')])
+    Input('buttonPopulation', 'n_clicks_timestamp'),])
 
-def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, btnSelected, btnDefault, btnGDP, btnPopulation, btnArea):
-    # add area column!!!
+def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, btnSelected, btnDefault, btnGDP, btnPopulation):
     file['default_size'] = 1
     file['area'] = 1
     file['scatterColor'] = 'default'
@@ -182,8 +180,7 @@ def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, b
     timestampsDict = {
         'default_size': btnDefault, 
         'gdp_md_est': btnGDP, 
-        'pop_est': btnPopulation,
-        'area': btnArea
+        'pop_est': btnPopulation
     }
     sizePicker = max(timestampsDict.items(), key=operator.itemgetter(1))[0]
 
