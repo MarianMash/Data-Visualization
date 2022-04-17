@@ -140,23 +140,18 @@ layout = html.Div([
                 dbc.Row(
                     [
                         html.Div([
-                                html.Button("Share of renewables",id='Share_of_Renewables', className="m-1 btn btn-info",style={"float":"right"}),
-                                html.Button("Share of electricity",id='Share_of_Electricity', className="m-1 btn btn-info",style={"float":"right"}),
+                                html.Button("% in electricity production",id='Share_of_Renewables', className="m-1 btn btn-info",style={"float":"right"}),
+                                html.Button("% of wind and solar",id='Share_of_Electricity', className="m-1 btn btn-info",style={"float":"right"}),
                                 ],style={"float":"right"})
                     ]
                 ),
                 #Title 
                 dbc.Row(
                     [
-<<<<<<< HEAD
-                        html.Div(html.H3(tab_string_new), id='Header_RN',  className="m-3 text-lg-center text-light"),
-                        html.Div(html.P(description_string), id='Second_Header_RN', className="m-3 text-lg-center text-light")
-=======
                         html.Div(html.H3(tab_string), id='Header_RN',  className="m-3 text-lg-center text-light"),
                         dbc.Col([
                             html.Div(html.P(description_string), id='Second_Header_RN', className="m-3 text-lg text-light")
                         ],width={'size':8, 'offset':2})
->>>>>>> d52819d1dbfaa86caad2b6ba9aa1564a5871675c
                     ]
                 ),
                 #Buttons and slider
