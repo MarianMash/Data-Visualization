@@ -7,13 +7,9 @@ from dash_bootstrap_templates import load_figure_template
 import tab_1, tab_2, tab_3, tab_4
 
 # ---------------------------------------------------------------------------------
-# Stile for the app 
-# external_stylesheets = ['https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/minty/bootstrap.min.css']
 
-# app = Dash(__name__, external_stylesheets=external_stylesheets)
-
-#dbc_css = ("https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.2/dbc.min.css")
-app = Dash(__name__)#, external_stylesheets=[dbc.themes.SOLAR])
+# suppress callback exceptions which are a result of the tab layout 
+app = Dash(__name__, suppress_callback_exceptions=True)
 
 #to make automatic settings for mobile (to be put into app =...):
 # meta_tags=[{'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0'}]
@@ -32,17 +28,11 @@ tab4 = tab_4.layout
 app.layout = html.Div([
     html.H1("Global energy statistics", className="m-3 text-xl-center text-light"),
     html.H3("Analysis of countries' energy indicators", className="m-3 text-xl-center"),
-    # dcc.Tabs(id="tabs-example", value='tab-1-example', children=[
-    #     dcc.Tab(id="tab-1", label='Tab One', value='tab-1-example'),
-    #     dcc.Tab(id="tab-2", label='Tab Two', value='tab-2-example'),
-    #     dcc.Tab(id="tab-3", label='Tab Three', value='tab-3-example'),
-    #     dcc.Tab(id="tab-4", label='Tab Four', value='tab-4-example')
-    # ]),
     dbc.Tabs(
             [
-                dbc.Tab(tab_id='tab-1-example', label="Total energy"),
+                dbc.Tab(tab_id='tab-1-example', label="Total energy overview"),
                 dbc.Tab(tab_id='tab-2-example', label="Total energy comparison"),
-                dbc.Tab(tab_id='tab-3-example', label="Electricity"),
+                dbc.Tab(tab_id='tab-3-example', label="Electricity overview"),
                 dbc.Tab(tab_id='tab-4-example', label="Renewables")
             ],
             id="tabs-example",
@@ -52,10 +42,6 @@ app.layout = html.Div([
     html.Div(id='tabs-content-example',
              children = tab1)
 ])
-
-# app.css.append_css({
-#     "external_url:https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/minty/bootstrap.min.css"
-# })
 
 # ------------------------------------------------------------------------------
 # Callback linking tabs layout to each tab
