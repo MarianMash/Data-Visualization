@@ -29,7 +29,13 @@ options1 = [{'label': 'Portugal', 'value': 'Portugal'},
 # Layout of this tab
 
 layout = html.Div([
-    html.Br(),
+    #Title 
+    dbc.Row(
+        [
+            html.Div(html.H3("Comparison of Total Energy Production and Consumption"), className="m-3 text-lg-center text-light"),
+            html.Div(html.P("""Some description"""), className="m-3 text-lg-center text-light")
+        ]
+    ),
     #Buttons - slider - dropdown
     dbc.Row(
         [

@@ -397,7 +397,7 @@ def update_graph(selected_year,Timestamp_Button_Prod,Timestamp_Button_Con, sort_
             "plot_bgcolor": "rgba(0, 0, 0, 0)",
             "paper_bgcolor": "rgba(0, 0, 0, 0)",
             },margin={'r':0,'t':0,'l':15,'b':0})
-    bar_hor.update_traces(text=list(dfff.Country), textposition='inside',textfont_color='White')
+    bar_hor.update_traces(text=list(dfff.Country), textposition='inside')
     bar_hor.update_yaxes(visible=False, showticklabels=False)
     bar_hor.update_xaxes(visible=False, showticklabels=False)
     bar_hor.update(layout_coloraxis_showscale=False)
