@@ -13,7 +13,7 @@ from dash import Dash, dcc, html, Input, Output, callback
 # ---------------------------------------------------------------------------------
 # Data import and cleaning
 
-file = pd.read_csv("ActualDataset.csv")
+file = pd.read_csv("Merged_Energy_Dataset.csv")
 
 # country list for dropdown 
 countryListComparison = []
@@ -246,8 +246,8 @@ def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, b
         dff.loc[i, 'scatterColor'] = dropSelection
 
     fig = px.scatter(data_frame=dff, 
-                    x = 'Total energy production (Mtoe)',
-                    y = 'Total energy consumption (Mtoe)',
+                    x = "Total production of Energy (Twh)",
+                    y = "Total consumption of Energy (Twh)",
                     size = sizePicker, 
                     hover_name = 'Country', 
                     color = 'scatterColor', 
@@ -265,8 +265,8 @@ def update_comparison_graph(slider_value, drop1_value, xaxis_type, yaxis_type, b
     barNames = ['Production', 'Consumption']
     dataHolder = []
     for dropSelection in drop1_value:
-        selectedCountryX = float(dff.loc[dff['Country'] == dropSelection]['Total energy production (Mtoe)'])
-        selectedCountryY = float(dff.loc[dff['Country'] == dropSelection]['Total energy consumption (Mtoe)'])
+        selectedCountryX = float(dff.loc[dff['Country'] == dropSelection]["Total production of Energy (Twh)"])
+        selectedCountryY = float(dff.loc[dff['Country'] == dropSelection]["Total consumption of Energy (Twh)"])
         
         barValues = []
         if xaxis_type == 'Linear':

@@ -13,7 +13,7 @@ import geojson
 # ---------------------------------------------------------------------------------
 # Data import and cleaning  
 
-df = pd.read_csv('Final_Dataset.csv')
+df = pd.read_csv('Merged_Energy_Dataset.csv')
 
 
         ### Consumption ###

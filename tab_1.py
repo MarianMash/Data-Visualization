@@ -17,17 +17,16 @@ import geojson
 # ---------------------------------------------------------------------------------##
 # Data import and cleaning
 
-df = pd.read_csv('ActualDataset.csv')
+df = pd.read_csv('Merged_Energy_Dataset.csv')
 
         ### Consumption ###
-tab_string = 'Total energy consumption (Mtoe)'
+tab_string = "Total consumption of Energy (Twh)"
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
         ### Production ###
-tab_string = 'Total energy production (Mtoe)'
+tab_string = "Total production of Energy (Twh)"
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
-last = 'Total energy consumption (Mtoe)'
 
 with open("geojson11.geojson") as f:
     gj = geojson.load(f)
@@ -194,7 +193,7 @@ layout = html.Div([
         ),
 
     ########################### CONSUMPTION ######################x
-   # html.H3('Total energy consumption (Mtoe)'),
+   # html.H3("Total consumption of Energy (Twh)"),
 
     html.Br(),
     html.A(html.Button('Show World', className="m-1 btn btn-light"),href='/'),
@@ -345,19 +344,19 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
         Prod_Time_Button = 0
 
     list_1 = production
-    tab_string = 'Total energy production (Mtoe)'
+    tab_string = "Total production of Energy (Twh)"
 
     header = [html.H3(tab_string)]
     
 ### determine which button was clicked last by comparing timestamps
     if Prod_Time_Button<Con_Time_Button:
         list_1 = consumption
-        tab_string = 'Total energy consumption (Mtoe)'
+        tab_string = "Total consumption of Energy (Twh)"
         header = [html.H3(tab_string)]
 
     if Prod_Time_Button > Con_Time_Button:
         list_1 = production 
-        tab_string = 'Total energy production (Mtoe)'
+        tab_string = "Total production of Energy (Twh)"
     
         header = [html.H3(tab_string)]
         
@@ -441,7 +440,7 @@ def All_Graphs(selected_year,sort_button_value,sort_button2_value, Prod_Time_But
     )
     # bar_hor.update_layout(coloraxis_colorbar={
     #         'title':'Mtoe',
-    #         'tickvals':(0,round(dff.iloc[0]['Total energy production (Mtoe)'])),
+    #         'tickvals':(0,round(dff.iloc[0]["Total production of Energy (Twh)"])),
     #         #'ticktext':ticks        
     #      })
     bar_hor.update_layout({
