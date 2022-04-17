@@ -18,6 +18,7 @@ df = pd.read_csv('Merged_Energy_Dataset.csv')
 
         ### Consumption ###
 tab_string = "Share of electricity in total final energy consumption (%)"
+tab_string_new = 'Share of wind and solar in electricity production (%)'
 
         ### Production ###
 tab_string = "Share of renewables in electricity production (%)"
@@ -147,10 +148,15 @@ layout = html.Div([
                 #Title 
                 dbc.Row(
                     [
+<<<<<<< HEAD
+                        html.Div(html.H3(tab_string_new), id='Header_RN',  className="m-3 text-lg-center text-light"),
+                        html.Div(html.P(description_string), id='Second_Header_RN', className="m-3 text-lg-center text-light")
+=======
                         html.Div(html.H3(tab_string), id='Header_RN',  className="m-3 text-lg-center text-light"),
                         dbc.Col([
                             html.Div(html.P(description_string), id='Second_Header_RN', className="m-3 text-lg text-light")
                         ],width={'size':8, 'offset':2})
+>>>>>>> d52819d1dbfaa86caad2b6ba9aa1564a5871675c
                     ]
                 ),
                 #Buttons and slider
@@ -416,7 +422,8 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_but
 
     # list_1 = production
     tab_string = 'Share of electricity in total final energy consumption (%)'
-    header = [html.H3(tab_string)]
+    tab_string_new = 'Share of wind and solar in electricity production (%)'
+    header = [html.H3(tab_string_new)]
     description_string = """Share of electricity in total final energy consumption is the ratio between the 
                             electricity consumption and the total energy consumed for commercial purposes."""
     second_header = [html.P(description_string)]
@@ -425,17 +432,19 @@ def update_graph(selected_year,Share_of_Renewables,Share_of_Electricity,sort_but
     if Share_of_Renewables<Share_of_Electricity:
         # list_1 = consumption
         tab_string = 'Share of electricity in total final energy consumption (%)'
-        header = [html.H3(tab_string)]
-        description_string = """Share of electricity in total final energy consumption is the ratio between the 
-                                electricity consumption and the total energy consumed for commercial purposes."""
+        tab_string_new = 'Share of wind and solar in electricity production (%)'
+        header = [html.H3(tab_string_new)]
+        description_string = """Share of wind and solar in electricity production as the name suggests represents the percentage 
+                            of electricity produced from wind and solar energy over the total electricity production."""
         second_header = [html.P(description_string)]
 
     if Share_of_Renewables > Share_of_Electricity:
         # list_1 = production 
         tab_string = "Share of renewables in electricity production (%)"
-        header = [html.H3(tab_string)]
-        description_string = """Share of wind and solar in electricity production as the name suggests represents the percentage 
-                            of electricity produced from wind and solar energy over the total electricity production."""
+        tab_string_new = "Share of renewables in electricity production (%)"
+        header = [html.H3(tab_string_new)]
+        description_string = """Share of renewables in electricity production represents the percentage of energy coming from renewable sources
+                            like wind, solar, hydropower, geothermal and bio energies """
         second_header = [html.P(description_string)]
 
      # Largst / Smallest Button
