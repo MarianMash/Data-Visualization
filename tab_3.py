@@ -14,7 +14,7 @@ import geojson
 # ---------------------------------------------------------------------------------##
 # Data import and cleaning
 
-df = pd.read_csv('Merged_Energy_Dataset.csv')
+df = pd.read_csv('Datasets/Merged_Energy_Dataset.csv')
 
 # Production
 tab_string = "Electricity production (TWh)"
@@ -26,7 +26,7 @@ tab_string = "Domestic electricity consumption (TWh)"
 df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 
 
-with open("geojson11.geojson") as f:
+with open("geodata/geojson11.geojson") as f:
     gj = geojson.load(f)
 
 # ---------------------------------------------------------------------------------
