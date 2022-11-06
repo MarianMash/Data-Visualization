@@ -12,7 +12,7 @@ import geojson
 # ---------------------------------------------------------------------------------
 # Data import and cleaning  
 
-df = pd.read_csv('Merged_Energy_Dataset.csv')
+df = pd.read_csv('Datasets/Merged_Energy_Dataset.csv')
 
 # Consumption 
 tab_string = "Share of electricity in total final energy consumption (%)"
@@ -28,7 +28,7 @@ description_string = """"Share of electricity in total final energy consumption 
 header_barplot_2_4_string = "Share of "
 header_pieplot_2_4_string = "Share of "
 
-with open("geojson11.geojson") as f:
+with open("geodata/geojson11.geojson") as f:
     gj = geojson.load(f)
 
 def Continent_comp(df, tabstring,value):

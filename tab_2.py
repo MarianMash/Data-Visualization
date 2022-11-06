@@ -13,7 +13,7 @@ from dash import Dash, dcc, html, Input, Output, callback
 # ---------------------------------------------------------------------------------
 # Data import and cleaning
 
-file = pd.read_csv("Merged_Energy_Dataset.csv")
+file = pd.read_csv("Datasets/Merged_Energy_Dataset.csv")
 
 # country list for dropdown 
 countryListComparison = []

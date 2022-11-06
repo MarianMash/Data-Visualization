@@ -15,7 +15,7 @@ import geojson
 # ---------------------------------------------------------------------------------##
 # Data import and cleaning
 
-df = pd.read_csv('Merged_Energy_Dataset.csv')
+df = pd.read_csv('Datasets/Merged_Energy_Dataset.csv')
 
 # Consumption
 tab_string = "Total consumption of Energy (Twh)"
@@ -30,7 +30,7 @@ df[f"{tab_string}_div_pop"] = (df[tab_string]/df["pop_est"])*10000
 header_barplot_2_string = "Total energy "
 header_pieplot_2_string = "Total energy "
 
-with open("geojson11.geojson") as f:
+with open("geodata/geojson11.geojson") as f:
     gj = geojson.load(f)
 
 # Lists for lower Graphs
